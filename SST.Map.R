@@ -219,7 +219,7 @@ length(unique(round(SST$reclass)))
 
 
 # sst colours 
-cols <- colorRampPalette(c( "#003CC7", "#288de7", "#47CBFF", "#62E300","#FFEA00", "#FF8800","#DB0000"), bias = 1, space = c("rgb", "Lab"))(13)
+cols <- colorRampPalette(c( "#003CC7", "#288de7", "#47CBFF", "#62E300","#FFEA00", "#FF8800","#DB0000"), bias = 1, space = c("rgb", "Lab"))(12)
 pal <- data.frame(labs = sort(unique(SST$reclass)), cols)
 pal$cols <- as.character(pal$cols)
 

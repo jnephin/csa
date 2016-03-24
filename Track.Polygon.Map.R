@@ -23,7 +23,7 @@ proj.world <- spTransform(land, Proj)
 smooth.world <- gSimplify(proj.world, tol = 500)
 m.world <- fortify(smooth.world)
 
-## sst region polygon
+## track polygon
 load("Data/TrackPolygon.rda")
 bb <- fortify(bb.poly)
 

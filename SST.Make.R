@@ -161,7 +161,7 @@ for (i in sort(unique(sst$Date))){
                        crs="+proj=longlat")
   ras.p <-  projectRaster(ras, 
                           crs=Proj, 
-                          res=10000)
+                          res=20000) # 20 x 20 km grid
   ras.pts <- data.frame(rasterToPoints(ras.p))
   ras.pts$Date <- i
   SST <- rbind(SST, ras.pts)
@@ -189,7 +189,7 @@ for (i in sort(unique(sst$Date))){
                        crs="+proj=longlat")
   ras.p <-  projectRaster(ras, 
                           crs=Proj, 
-                          res=10000)
+                          res=20000) # 20 x 20 km grid
   ras.pts <- data.frame(rasterToPoints(ras.p))
   ras.pts$Date <- i
   SST <- rbind(SST, ras.pts)
