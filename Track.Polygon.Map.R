@@ -119,7 +119,8 @@ extentplot <- ggplot(data = NULL) +
   # survey track
 geom_point(data = track, aes(x = Lon, y = Lat), size = .1, pch = 16) +
   #land polygon
-  geom_polygon(data = m.world, aes(x=long, y=lat, group = group), fill = "gray75", colour = "gray65",size = 0.01) +
+  geom_polygon(data = m.world, aes(x=long, y=lat, group = group), 
+               fill = "gray75", colour = "gray65",size = 0.01) +
   # track polygon
 geom_polygon(data = bb, aes(x = long, y = lat), fill=NA, colour = "red", size = 1) + 
   # cities
@@ -159,7 +160,7 @@ extentplot
 
 
 # Save as a pdf
-pdf("Figures/Maps/TrackRegion.1998-2015.Map.pdf", width=3, height=6) 
+pdf("Figures/TrackRegion.1998-2015.Map.pdf", width=3, height=6) 
 extentplot
 dev.off()
 

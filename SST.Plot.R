@@ -42,14 +42,16 @@ pal <- c("#0072B2", "#56B4E9","#FFA200", "#F0E442", "#DE3335", "#F7819B", "#984e
 LatSpringPlot <- basePlot +
   geom_hline(yintercept = 0, size=.1, linetype = "dashed")+
   geom_line(data = spring.zonal.fine, aes(x = Latitude, y = mean, colour = factor(Year))) +
-  geom_ribbon(data = spring.zonal.fine, aes(x = Latitude, fill = factor(Year), ymin=mean-sd, ymax=mean+sd), alpha =.1)+
+  geom_ribbon(data = spring.zonal.fine, aes(x = Latitude, fill = factor(Year), 
+                                            ymin=mean-sd, ymax=mean+sd), alpha =.1)+
   scale_colour_manual(values = pal, name = "Year", guide = 
                         guide_legend(direction = "horizontal", nrow=1,
                                      keywidth = .5,  keyheight = .1,
                                      label.position = "top", override.aes = list(size=.8)))+
   scale_fill_manual(values = pal, guide = "none")+
   coord_cartesian(ylim=c(-2,2))+
-  scale_x_continuous(limits = c(32.625,58.125), breaks = c(35,40,45,50,55),expand = c(0,0)) +
+  scale_x_continuous(limits = c(32.625,58.125), breaks = c(35,40,45,50,55),
+                     expand = c(0,0)) +
   labs(x = expression(paste("Latitude (",degree,")")), 
        y = expression(paste("Spring Mean Temperature Anomalies (",degree,"C)")))+
   theme(legend.justification = c(1,-.06), legend.position = c(1,-.06))
@@ -118,7 +120,7 @@ regPlot <- basePlot +
                                      label.position = "top"))+
   coord_cartesian()+
   labs(x = expression(paste("Year")), 
-       y = expression(paste("Regional Temperature Anomaly (",degree,"C)")))+
+       y = expression(paste("Mean Temperature Anomalies (",degree,"C)")))+
   theme(legend.justification = c(-.04,-.05), legend.position = c(-.04,-.05))
 regPlot
 
@@ -153,7 +155,7 @@ countryPlot <- basePlot +
                                      keyheight = .3, label.position = "top"))+
   coord_cartesian()+
   labs(x = expression(paste("Year")), 
-       y = expression(paste("Regional Temperature Anomaly (",degree,"C)")))+
+       y = expression(paste("Mean Temperature Anomalies (",degree,"C)")))+
   theme(legend.justification = c(-.05,1.04), legend.position = c(-.05,1.04))
 countryPlot
 

@@ -6,7 +6,7 @@ require(plyr)
 data.list <- list.files(path = "Data/biomass", pattern = "*.csv")
 track <- NULL
 for(i in data.list){
-  tmp <- read.csv(file.path("Data/Biomass",i),header=T) 
+  tmp <- read.csv(file.path("Data/biomass",i),header=T) 
   tmp$year <- sub(".csv", "", i)
   track <- rbind(track, tmp)
 }
