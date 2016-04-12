@@ -25,7 +25,7 @@ proj4string(bb) <- CRS("+proj=longlat")
 bb.proj <- spTransform(bb, Proj)
 
 ## buffer
-bb.poly <- gBuffer(bb.proj, width=60000) #buffer 60 km
+bb.poly <- gBuffer(bb.proj, width=30000) #buffer 30 km
 plot(bb.poly)
 
 

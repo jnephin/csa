@@ -42,6 +42,8 @@ table(haul$lat_upper, haul$year)
 # merge haul and strata data
 haul <- merge(haul, strata, by="lat_upper")
 
+# save haul by strata data
+save(haul, file = "Data/Haul.Strata.rda")
   
   
 ############################################################################
@@ -76,8 +78,12 @@ xylen[is.na(xylen$strata),]
 slen <- ddply(xylen, .(LENGTH,strata,year), summarise, count = sum(count))
 summary(slen)
 
+# mean length counts by strata
+mlen <- ddply(xylen, .(LENGTH,strata,year), summarise, count = mean(count))
+summary(mlen)
+
 # save length by strata data
-save(slen, file = "Length.Strata.rda")
+save(mlen, file = "Data/Length.Strata.rda")
 
 
 
