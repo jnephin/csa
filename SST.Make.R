@@ -155,13 +155,11 @@ sst.bb$grp[sst.bb$Latitude >= 48.5] <- "Canada"
 
 # mean sst for canada and us
 mean.sst <- ddply(sst.bb[sst.bb$Month %in% c("04","05","06","07","08","09"),], 
-                  .(grp, Month, Year), summarise, temp.anom = mean(anom))
-can.sst <- mean.sst[1:60,2:4]
-us.sst <- mean.sst[61:120,2:4]
+                  .(grp, Month, Year), summarise, value = mean(Temp), anom = mean(anom))
 
 # save mean sst
-save(can.sst, file = "Data/Mean.SST.Can.rda")
-save(us.sst, file = "Data/Mean.SST.US.rda")
+save(mean.sst, file = "Data/Mean.SST.rda")
+
 
 
 

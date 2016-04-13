@@ -165,9 +165,16 @@ save(chl.bb, file="Data/Chl.Track.1998-2015.qd.rda")
 ##########################################################################################
 # mean chloro for the coast
 
+
+# add us and canada labels (>48.5 cut-off)
+chl.bb$grp <- "US"
+chl.bb$grp[chl.bb$Latitude >= 48.5] <- "Canada"
+
 # mean
 mean.chl <- ddply(chl.bb[chl.bb$Month %in% c("04","05","06","07","08","09"),], 
-                  .(Month, Year), summarise, chl.anom = mean(anom, na.rm=T))
+                  .(grp, Month, Year), summarise, 
+                  value = mean(Chlor, na.rm=T),
+                  anom = mean(anom, na.rm=T))
 
 # save mean chl
 save(mean.chl, file = "Data/Mean.chl.rda")
