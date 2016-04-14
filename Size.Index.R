@@ -44,7 +44,7 @@ mla <- ddply(spec[spec$AGE == 5,], .(year), summarise,
 mla$anom <- mla$mean - mean(mla$mean)
 
 # save length at age 5 size index
-save(mla,file="Data/A5.Mean.Length.rda")
+save(mla,file="Data/A5.Length.Index.rda")
 
 # positive / negative label
 mla$sign <- "p"

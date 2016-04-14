@@ -3,9 +3,10 @@ require(maptools)
 require(PBSmapping)
 require(ggplot2)
 require(grid)
-library(rgdal)
+require(rgdal)
 require(sp)
 require(raster)
+require(rgeos)
 
 
 
@@ -19,7 +20,8 @@ Proj <- "+proj=aea +lon_0=110w +lat_0=0 +lat_1=30n +lat_2=60n +x_0=120w +y_0=0"
 
 # land polygon
 path <- file.path(.libPaths()[2],"PBSmapping/gshhg-bin-2.3.4/gshhs_f.b")
-coast <-importGSHHS(path, xlim=c(215, 250), ylim=c(30,62),  n=15, maxLevel =1, useWest = T)
+coast <-importGSHHS(path, xlim=c(215, 250), ylim=c(30,62),  
+                    n=15, maxLevel =1, useWest = T)
 land <-PolySet2SpatialPolygons(coast) 
 proj.world <- spTransform(land, Proj)
 m.world <- fortify(proj.world)
