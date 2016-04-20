@@ -158,7 +158,7 @@ migup <- basePlot +
   labs(x = "", y = "Correlation coefficient")+
   scale_shape_manual(values = c(1,15), guide = FALSE)+
   scale_colour_manual(values = c("#E69F00","#56B4E9"), name = "", label = c("South","North"))+ 
-  theme(legend.position = c(0,1), legend.justification = c(0,1),
+  theme(legend.position = c(0,1.2), legend.justification = c(0,1.2),
         panel.margin = unit(.2, "lines"),
         axis.text.x = element_text(size=7, colour = "black", angle = 90))
 migup
@@ -178,7 +178,7 @@ dev.off()
 ############################################################################
 # april, may june anomaly index
 
-upind <- upwel[upwel$Month %in% c("APR","MAY","JUN"),] 
+upind <- upwel[upwel$Month %in% c("APR","MAY","JUN","JUL"),] 
 upind <- aggregate(anom ~ LAT + YEAR, mean, data = upind)
 
 # save south and north index

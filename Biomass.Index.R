@@ -74,7 +74,7 @@ tl <- table(track$year[track$year == i])[1]
 dat <- data.frame(zeros=d, total=tl, year=i)
 df <- rbind(df,dat)
 }
-df$ratio <- df$zeros/df$total
+df$ratio <- (df$zeros/df$total) * 100
 df
 
 # anomaly
@@ -93,7 +93,8 @@ patch$sign[patch$anom <= 0] <- "n"
 patchplot <- basePlot +
   geom_bar(data = patch, aes(x = factor(year), y = anom, fill = factor(sign)),
            width = .7, show.legend = FALSE, stat = "identity")+
-  labs(x = "", y = "Proportion of survey area without hake anomaly")+
+  labs(x = "", y = "Percent of survey area without hake anomaly")+
+  geom_hline(yintercept = 0, size = .1, linetype = 1, colour= "black")+
   scale_fill_manual(values = c("#377eb8","#e41a1c"))
 patchplot
 

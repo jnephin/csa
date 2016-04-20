@@ -7,7 +7,7 @@ require(rgdal)
 require(sp)
 require(raster)
 require(rgeos)
-
+require(RColorBrewer)
 
 
 # projection
@@ -96,12 +96,9 @@ strptitle$x <- -1000000
 
 #########################################################################################
 #########################################################################################
-###  ANOMALY MAPS ##
-#########################################################################################
-#########################################################################################
+# survey map
 
-
-# load sst raster
+# load track data 
 load("Data/Track.1998-2015.rda") # track
 
 track$zeros <- "1"
@@ -114,8 +111,8 @@ track <- spTransform(track, Proj)
 track <- as.data.frame(track)
 
 
-
-bubblePlot <- ggplot(data = NULL) +
+# plot
+surveyPlot <- ggplot(data = NULL) +
   geom_polygon(data = m.world, aes(x=long, y=lat, group = group), 
                fill = "gray75", colour = "gray65",size = 0.01) +
   #geom_point(data = track[track$zeros == "0",], 
@@ -165,14 +162,106 @@ bubblePlot <- ggplot(data = NULL) +
         plot.margin = unit(c(.2,6,.2,.2), "lines"), # top, right, bottom, and left 
         panel.margin = unit(0.2, "lines")) +
   guides(size = guide_legend(override.aes = list(stroke=1)))
-bubblePlot
+surveyPlot
 
 # Save as a pdf
-pdf("Figures/Biomass/Maps/Bubble.Biomass.Map.1998-2015.pdf", width=6, height=6) 
-bubblePlot
+pdf("Figures/Biomass/Maps/Survey.Biomass.Map.1998-2015.pdf", width=6, height=6) 
+surveyPlot
 dev.off()
 
 
 
+
+
+#########################################################################################
+#########################################################################################
+# krig  map
+
+# load kriged data 
+load("Data/Krig.1998-2015.rda") # krig
+
+# loop through years to rasterize
+krig_ras <- NULL
+for (i in c(1998,2001,2003,2005,2007,2009,2011,2012,2013,2015)){
+  
+  # project
+  tmp <- krig[krig$year == i,]
+  coordinates(tmp) <- ~Lon + Lat
+  proj4string(tmp) <- CRS("+proj=longlat")
+  tmp <- spTransform(tmp, Proj)
+  
+  # Make an evenly spaced raster, the same extent as original data
+  e <- extent(tmp)
+  
+  # Create raster mask, rasterize and convert back to points
+  r <- raster(nrows =  120, ncols = 35, ext = e)
+  rf <- rasterize(tmp, r, field = "Biomass.density", fun = mean)
+  ras <- data.frame(rasterToPoints(rf)) 
+  ras$year <- i
+  krig_ras <- rbind(krig_ras, ras)
+}
+
+# colour palette
+pal <- rev(brewer.pal(9, "Spectral"))
+
+
+# plot
+krigPlot <- ggplot(data = NULL) +
+  geom_polygon(data = m.world, aes(x=long, y=lat, group = group), 
+               fill = "gray75", colour = "gray65",size = 0.01) +
+  geom_raster(data = krig_ras, 
+             aes(x = x, y = y, group=year, fill = layer/1000)) +
+  scale_fill_gradientn(colours = pal, 
+                       values = c(0,.1,.15,.2,.3,.5,.7,.8,1),
+                      name = expression(paste("Biomass \nmt / 25",nmi^2))) +
+  facet_wrap( ~ year, nrow = 2) +
+  geom_line(data = grats, aes(x=long, y=lat, group = group), 
+            size=.01, colour = "grey55") +
+  geom_segment(data = scalebar, 
+               aes(x = x, y = y, xend = end.x, yend = end.y), 
+               size = 1, colour = "black", lineend = "butt") +
+  geom_text(data = scalebar, 
+            aes(x = xlab, y = y+80000, label =lab), 
+            size = 2.5, colour = "black") +
+  geom_segment(data = arrowbar, 
+               aes(x = x, y = y, xend = end.x, yend = end.y), 
+               size = .2, colour = "black", lineend = "round",
+               arrow = arrow(angle = 45, type = "open", 
+                             length = unit(.2, "cm"))) +
+  geom_text(data = arrowbar, 
+            aes(x = mean(c(x,end.x)), y = mean(c(y,end.y)), 
+                label = lab, angle = angle), 
+            size = 4, colour = "black", fontface = 2) +
+  geom_text(data = strptitle, 
+            aes(x = x, y = y, label = year), 
+            size = 3, colour = "black") +
+  labs(x="", y="") +
+  scale_x_continuous(breaks = xlabs$x, labels = xlabs$xlab) +
+  scale_y_continuous(breaks = ylabs$y, labels = ylabs$ylab) +
+  coord_fixed(xlim=c(-1600000, -900000), ylim=c(3675000, 6500000)) +
+  theme(panel.border = element_rect(fill=NA, colour="black", size = .1),
+        panel.background = element_rect(fill="white",colour="white"),
+        strip.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        strip.text = element_blank(),
+        axis.title = element_blank(),
+        axis.text = element_text(size=7, colour = "black"),
+        axis.ticks.length = unit(0.1,"cm"),
+        legend.text = element_text(size=8),
+        legend.title = element_text(size=9, face="plain"),
+        legend.background = element_blank(), legend.key = element_blank(),
+        legend.justification = c(0,1), legend.position = c(1,.7), 
+        plot.margin = unit(c(.2,6,.2,.2), "lines"), # top, right, bottom, and left 
+        panel.margin = unit(0.2, "lines")) +
+  guides(size = guide_legend(override.aes = list(stroke=1)))
+krigPlot
+
+
+
+# Save as a pdf
+pdf("Figures/Biomass/Maps/Krig.Biomass.Map.1998-2015.pdf", width=6, height=6) 
+krigPlot
+dev.off()
 
 

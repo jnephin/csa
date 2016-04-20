@@ -125,48 +125,5 @@ dev.off()
 
 
 
-######################################################################
-## Does hake migration depend on total hake biomass?
-
-load("Data/StockBiomass.Index.rda") #stock
-
-# add pCan and bcan
-stock$bcan <- indices$bCan
-stock$pcan <- indices$pCan
-
-
-# correlation
-ct <- cor.test(stock$krig,stock$bcan, method = "spearman")
-r <- round(ct$estimate,2)
-p <- round(ct$p.value,3)
-
-ptot <- basePlot +
-  geom_point(data =  stock, 
-             aes(y = bcan, x = krig, fill = factor(year)),size=2.5, pch=21) +
-  scale_fill_manual(values = pal, name = "")+
-  labs(y = "Hake biomass (kmt) in Canadian waters", 
-       x = "Hake biomass (kmt)") +
-  scale_x_continuous(labels=comma) +
-  theme(legend.key.height = unit(.4,"cm"), 
-        legend.key.width = unit(.3,"cm"),
-        axis.text.x = element_text(size=8, colour = "black"),
-        legend.justification = c(-0.02,1.25), legend.position = c(-0.02,1.25))
-ptot
-
-
-#################################################################
-# Save as a pdf
-pdf("Figures/Correlate/Can.Biomass.Total.Biomass.pdf", width=5, height=3.5) 
-grid.arrange(ptot)
-grid.text(bquote(rho~"="~.(r)), x = .25, y = .9, hjust =0, gp = gpar(fontsize = 8))
-grid.text(bquote("P"~"="~.(p)), x = .25, y = .85, hjust =0, gp = gpar(fontsize = 8))
-dev.off()
-
-
-
-##-- N-S Hake distribution seems to be independant of total Hake biomass
-
-
-
 
 

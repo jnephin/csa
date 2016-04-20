@@ -135,7 +135,8 @@ peryr$mean <- peryr$age * peryr$percent
 meanage <- aggregate(mean ~ year, sum, data = peryr)
 meanage$anom <- meanage$mean - mean(meanage$mean)
 
-
+# save mean age index
+save(meanage, file = "Data/Mean.Age.rda")
 
 
 ####----------------------------------------------####
@@ -189,15 +190,15 @@ save(meanagecan, file = "Data/Mean.Age.Can.rda")
 # plot indices
 
 # combine all age indices
-ageind <- rbind(meanageus,meanagecan)
-ageind$grp <- c(rep("US",nrow(meanageus)),rep("Canada",nrow(meanagecan)))
+ageind <- rbind(meanage,meanagecan)
+ageind$grp <- c(rep("Total stock",nrow(meanage)),rep("Canada",nrow(meanagecan)))
 
 # positive / negative label
 ageind$sign <- "p"
 ageind$sign[ageind$anom <= 0] <- "n"
 
 # strip labels
-labstrp <- data.frame(grp = c("Canada","US"),x = rep("2001",2), y = rep(1.8,2))
+labstrp <- data.frame(grp = c("Canada","Total stock"),x = rep("2001",2), y = rep(1.8,2))
 
 # plot age anomaly indices
 aplot <- basePlot +

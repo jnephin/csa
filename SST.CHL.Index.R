@@ -4,7 +4,8 @@ source("base.plot.R")
 # load migration,  sst and chl indices 
 load("Data/AgedMigration.5.Index.rda") #mig5
 load("Data/Migration.percent.Index.rda")#pcan
-load("Data/Migration.total.Index.rda") #bcanload("Data/Mean.SST.rda") #mean.sst
+load("Data/Migration.total.Index.rda") #bcan
+load("Data/Mean.SST.rda") #mean.sst
 load("Data/Mean.chl.rda") #mean.chl
 
 
@@ -144,7 +145,7 @@ migchl <- basePlot +
   labs(x = "Month", y = "Correlation coefficient")+
   scale_colour_manual(values = c("#56B4E9", "#E69F00"), name = "", label = c("Canada","US"))+ 
   scale_shape_manual(values = c(1,15), guide = FALSE)+
-  theme(legend.position = c(.1,.1), legend.justification = c(.1,.1))
+  theme(legend.position = c(-.01,-.1), legend.justification = c(-.01,-.1))
 migchl
 
 
@@ -194,20 +195,23 @@ dev.off()
 ############################################################################
 # april, may june anomaly index
 
-chlind <- mean.chl[mean.chl$Month == "07",] 
+chl.can <- mean.chl[mean.chl$grp == "Canada",-1]
+chl.us <- mean.chl[mean.chl$grp == "US",-1]
+chl.can <- chl.can[chl.can$Month == "09",2:4] 
+chl.us <- chl.us[chl.us$Month == "07",2:4] 
 
-sstind <- mean.chl[mean.sst$Month %in% c("04","05","06"),] 
-sstind <- aggregate(anom ~ grp + Year, mean, data = sstind)
+# sst group by country, choose month
+sst.can <- mean.sst[mean.sst$grp == "Canada",-1]
+sst.us <- mean.sst[mean.sst$grp == "US",-1]
+sst.can <- sst.can[sst.can$Month == "08",2:4] 
+sst.us <- sst.us[sst.us$Month == "04",2:4] 
 
 # save indices
-chl.can <- chlind[chlind$grp == "Canada",-1]
+
 save(chl.can, file = "Data/Can.Chl.Index.rda")
-chl.us <- chlind[chlind$grp == "US",-1]
 save(chl.us, file = "Data/US.Chl.Index.rda")
 
-sst.can <- sstind[sstind$grp == "Canada",-1]
 save(sst.can, file = "Data/Can.SST.Index.rda")
-sst.us <- sstind[sstind$grp == "US",-1]
 save(sst.us, file = "Data/US.SST.Index.rda")
 
 

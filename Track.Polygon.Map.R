@@ -161,9 +161,48 @@ extentplot
 
 
 # Save as a pdf
-pdf("Figures/TrackRegion.1998-2015.Map.pdf", width=3, height=6) 
+pdf("Figures/TrackRegion.Map.pdf", width=3, height=6) 
 extentplot
 dev.off()
 
 
 
+
+###############################################################################
+##############################################################################
+#plots
+
+yearsplot <- ggplot(data = NULL) +
+  facet_wrap(~year, nrow = 2)+
+  # survey track
+  geom_point(data = track, aes(x = Lon, y = Lat), size = .1, pch = 16) +
+  #land polygon
+  geom_polygon(data = m.world, aes(x=long, y=lat, group = group), 
+               fill = "gray75", colour = "gray65",size = 0.01) +
+  # track polygon
+  geom_polygon(data = bb, aes(x = long, y = lat), fill=NA, 
+               colour = "red", size = .1) + 
+  # axes
+  labs(x="", y="") +
+  scale_x_continuous(breaks = xlabs$x, labels = xlabs$xlab) +
+  scale_y_continuous(breaks = ylabs$y, labels = ylabs$ylab) +
+  #themes 
+  coord_fixed(xlim=c(-1650000, -650000), ylim=c(3500000, 6600000))  +
+  theme(panel.border = element_rect(fill=NA, colour="black", size = .1),
+        panel.background = element_rect(fill="white",colour="white"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text = element_blank(),
+        strip.text = element_blank(),
+        strip.background = element_blank(),
+        axis.ticks.length = unit(0.1,"cm"),
+        axis.title = element_blank(),
+        plot.margin = unit(c(.5,.5,.3,.3), "lines"),
+        panel.margin = unit(0,"lines")) # top, right, bottom, and left 
+yearsplot
+
+
+# Save as a pdf
+pdf("Figures/TrackRegion.Years.Map.pdf", width=6, height=8) 
+yearsplot
+dev.off()

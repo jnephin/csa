@@ -49,7 +49,7 @@ meltsy$age <- as.numeric(as.character(meltsy$variable))
 
 # proportion of each age class by strata by year
 persy <- ddply(meltsy, .(strata,year), transform, 
-                   percent = value/sum(value))
+                   percent = value/sum(value)*100)
 
 
 # load strata and merge for strata names
@@ -98,7 +98,7 @@ atrack$Age.biomass <- atrack$biomass * atrack$percent
 
 # plot biomass by age by strata
 asplot <- basePlot +
-  geom_point(data = atrack, aes(x = year, y = age, size = Age.density), 
+  geom_point(data = atrack, aes(x = year, y = age, size = Age.biomass), 
              pch = 1, show.legend = FALSE)+
   facet_wrap(~name, dir = "v")+
   labs(x = "Year", y = "Age")+
@@ -131,7 +131,7 @@ agy <- ddply(atrack, .(age, grp, year), summarise,
 # total biomass for each age each year
 agy <- ddply(agy, .(age, year), transform, total = sum(Age.biomass))
 
-agy$prop <- agy$Age.biomass / agy$total
+agy$prop <- (agy$Age.biomass / agy$total) *100
 
 # prop in canada
 propcan <- agy[agy$grp == "Canada",][-2]
@@ -144,9 +144,9 @@ pal <- c("#0072B2", "#56B4E9","#FFA200", "#F0E442", "#DE3335", "#F7819B", "#984e
 # plot biomass in canada by age
 propplot <- basePlot +
   geom_line(data = propcan, aes(x = age, y = prop, colour = year))+
-  labs(x = "Age", y = "Proportion of Hake biomass in Canada")+
+  labs(x = "Age", y = "Percent of Hake biomass in Canada")+
   scale_x_continuous(expand = c(0,0), breaks = seq(2,20,2), limits = c(2,22))+
-  scale_y_continuous(expand = c(0,0), limits = c(-.01,.95))+
+  scale_y_continuous(expand = c(0,0), limits = c(-.01,95))+
   scale_colour_manual(values = pal, name = "", guide = 
                         guide_legend(direction = "vertical", 
                                      keywidth = .5,  keyheight = .7,
@@ -195,7 +195,7 @@ mig$sign[mig$anom <= 0] <- "n"
 
 
 # strip labels
-labstrp <- data.frame(age = c("age 5","age 10"),x = rep("2013",2), y = rep(.3,2))
+labstrp <- data.frame(age = c("age 5","age 10"),x = rep("2013",2), y = rep(30,2))
 labstrp$age <- factor(labstrp$age, levels = c("age 5","age 10"))
 
 # plot age anomaly indices
@@ -206,7 +206,7 @@ amigplot <- basePlot +
   geom_hline(yintercept = 0, size = .1, linetype = 1, colour= "black")+
   geom_text(data = labstrp, aes(x = factor(x), y =  y, label = age), 
             size = 3, hjust = 0)+
-  labs(x = "", y = "Proportion of hake in Canada anomaly")+
+  labs(x = "", y = "Percent of hake in Canada anomaly")+
   scale_fill_manual(values = c("#377eb8","#e41a1c"))+
   theme(strip.text = element_blank(),
         panel.margin = unit(.2, "lines"))
