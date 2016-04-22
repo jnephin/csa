@@ -39,7 +39,7 @@ cor.dat #mla - mage, patch - aggr, magecan - patch, aggr - stock
 plot(response)
 cor.response <- cor(response)
 cor.response[cor.response < 0.5] <- 0
-cor.response #mla - mage, patch - aggr, magecan - patch, aggr - stock
+cor.response
 
 
 

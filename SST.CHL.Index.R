@@ -121,6 +121,42 @@ for (i in unique(as.character(mean.chl$Month))){
 }
 
 
+
+####################################################################
+## sst cor plot
+
+## label significant correlations
+cor.sst$sig <- "n"
+cor.sst$sig[cor.sst$p < 0.05] <- "y"
+
+## label strata
+cor.sst$ind <- as.character(cor.sst$ind)
+cor.sst$ind[cor.sst$ind == "mig5"] <- "Age-5 migration index"
+cor.sst$ind[cor.sst$ind == "bcan"] <- "Total biomass in Canadian waters"
+cor.sst$ind[cor.sst$ind == "pcan"] <- "Percent biomass in Canadian waters"
+
+
+# plot migration index sst correltion
+migsst <- basePlot +
+  geom_point(data = cor.sst, aes(x = month, y = cor, shape = sig, colour = area), 
+             size = 2)+
+  geom_line(data = cor.sst, aes(x = month, y = cor, group = area, colour = area))+
+  facet_wrap(~ind)+
+  geom_hline(yintercept = 0, linetype = 3, size = .4, colour = "grey30")+
+  labs(x = "Month", y = "Correlation coefficient")+
+  scale_colour_manual(values = c("#56B4E9", "#E69F00"), name = "", label = c("Canada","US"))+ 
+  scale_shape_manual(values = c(1,15), guide = FALSE)+
+  theme(legend.position = c(.01,1.1), legend.justification = c(.01,1.1))
+migsst
+
+
+# Save as a pdf
+pdf("Figures/Correlate/SST.Migration.pdf", width=7, height=3) 
+migsst
+dev.off()
+
+
+
 ####################################################################
 ## chl cor plot
 
@@ -155,40 +191,6 @@ migchl
 dev.off()
 
 
-####################################################################
-## sst cor plot
-
-## label significant correlations
-cor.sst$sig <- "n"
-cor.sst$sig[cor.sst$p < 0.05] <- "y"
-
-## label strata
-cor.sst$ind <- as.character(cor.sst$ind)
-cor.sst$ind[cor.sst$ind == "mig5"] <- "Age-5 migration index"
-cor.sst$ind[cor.sst$ind == "bcan"] <- "Total biomass in Canadian waters"
-cor.sst$ind[cor.sst$ind == "pcan"] <- "Percent biomass in Canadian waters"
-
-
-# plot migration index sst correltion
-migsst <- basePlot +
-  geom_point(data = cor.sst, aes(x = month, y = cor, shape = sig, colour = area), 
-             size = 2)+
-  geom_line(data = cor.sst, aes(x = month, y = cor, group = area, colour = area))+
-  facet_wrap(~ind)+
-  geom_hline(yintercept = 0, linetype = 3, size = .4, colour = "grey30")+
-  labs(x = "Month", y = "Correlation coefficient")+
-  scale_colour_manual(values = c("#56B4E9", "#E69F00"), name = "", label = c("Canada","US"))+ 
-  scale_shape_manual(values = c(1,15), guide = FALSE)+
-  theme(legend.position = c(.1,.1), legend.justification = c(.1,.1))
-migsst
-
-
-# Save as a pdf
-pdf("Figures/Correlate/SST.Migration.pdf", width=7, height=3) 
-migsst
-dev.off()
-
-
 
 
 ############################################################################
@@ -197,14 +199,14 @@ dev.off()
 
 chl.can <- mean.chl[mean.chl$grp == "Canada",-1]
 chl.us <- mean.chl[mean.chl$grp == "US",-1]
-chl.can <- chl.can[chl.can$Month == "09",2:4] 
-chl.us <- chl.us[chl.us$Month == "07",2:4] 
+chl.can <- chl.can[chl.can$Month == "08",2:4] 
+chl.us <- chl.us[chl.us$Month == "05",2:4] 
 
 # sst group by country, choose month
 sst.can <- mean.sst[mean.sst$grp == "Canada",-1]
 sst.us <- mean.sst[mean.sst$grp == "US",-1]
 sst.can <- sst.can[sst.can$Month == "08",2:4] 
-sst.us <- sst.us[sst.us$Month == "04",2:4] 
+sst.us <- sst.us[sst.us$Month == "05",2:4] 
 
 # save indices
 

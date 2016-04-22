@@ -2,21 +2,22 @@ source("base.plot.R")
 require(plyr)
 require(scales)
 require(gridExtra)
-load("Data/LatIndices.rda") #indices
-load("Data/Track.1998-2015.rda") #track
+load("Data/Migration.percent.Index.rda") #pcan
+load("Data/Migration.total.Index.rda") #bcan
+load("Data/Krig.1998-2015.rda") #krig
 
 
 # sum Biomass by latitude (at 0.01 deg resolution)
-track$Latitude <- round(track$Lat,2)
-sum.track <- ddply(track, .(Latitude, year),  with, each(sum)(Biomass.density))
+krig$Latitude <- round(krig$Lat,2)
+sum.krig <- ddply(krig, .(Latitude, year),  with, each(sum)(Biomass.density/1000/1000))
 
 # sum Biomass values cummulatively by year
-ord.track <- sum.track[order(sum.track$Latitude),]
-cumtrack <- ddply(ord.track, "year", transform, cumBiomass = cumsum(sum))
+ord.krig <- sum.krig[order(sum.krig$Latitude),]
+cumkrig <- ddply(ord.krig, "year", transform, cumBiomass = cumsum(sum))
 
 # percent Biomass
-cumtrack <- ddply(cumtrack, "year", transform, maxBiomass = tail(cumBiomass,1))
-cumtrack$cdf <-  cumtrack$cumBiomass/cumtrack$maxBiomass
+cumkrig <- ddply(cumkrig, "year", transform, maxBiomass = tail(cumBiomass,1))
+cumkrig$cdf <-  cumkrig$cumBiomass/cumkrig$maxBiomass
 
 
 
@@ -32,15 +33,15 @@ pal <- c("#0072B2", "#56B4E9","#FFA200", "#F0E442", "#DE3335", "#F7819B", "#984e
 
 ## Plot cum biomass v. Latitude
 cumplot <- basePlot +
-  geom_rect(data = data.frame(y= 0, ymax = 390000000, x = 48.4, xmax = 58.5),
+  geom_rect(data = data.frame(y= 0, ymax = 2100, x = 48.4, xmax = 58.5),
             aes(xmin = x, xmax = xmax, ymin = y, ymax = ymax), fill = "grey80") +
-  geom_path(data = cumtrack, 
+  geom_path(data = cumkrig, 
             aes(x = Latitude, y = cumBiomass, colour = factor(year)), size = .7) +
- scale_colour_manual(values = pal, name = "")+
-  annotate("text", x = 48.2, y = 365000000, label = "US", hjust = 1,size=3)+
-  annotate("text", x = 58.2, y = 365000000, label = "CANADA", hjust = 1, colour = "White",size=3)+
-  coord_cartesian(xlim = c(35.,58.5), ylim= c(0,380000000), expand = c(0,0))+
-  labs(x = "Latitude", y = "Cumulative Biomass") +
+  scale_colour_manual(values = pal, name = "")+
+  annotate("text", x = 48.2, y = 2000, label = "US", hjust = 1,size=3)+
+  annotate("text", x = 58.2, y = 2000, label = "CANADA", hjust = 1, colour = "White",size=3)+
+  coord_cartesian(xlim = c(35.,58.5), ylim= c(0,2100), expand = c(0,0))+
+  labs(x = "Latitude", y = "Cumulative Biomass (kmt)") +
   theme(legend.key.height = unit(.4,"cm"), legend.key.width = unit(.3,"cm"),
         legend.justification = c(0,1), legend.position = c(-0.01,1.1))
 cumplot
@@ -56,7 +57,7 @@ dev.off()
 ## Plot percent biomass v. Latitude
 perplot <- basePlot +
   geom_rect(data = data.frame(y= -0.01, ymax = 1.01, x = 48.4, xmax = 58.5),aes(xmin = x, xmax = xmax, ymin = y, ymax = ymax), fill = "grey80") +
-  geom_path(data = cumtrack, aes(x = Latitude, y = cdf, colour = factor(year)), size = .7) +
+  geom_path(data = cumkrig, aes(x = Latitude, y = cdf, colour = factor(year)), size = .7) +
   scale_colour_manual(values = pal, name = "")+
   annotate("text", x = 48.2, y = 0, label = "US", hjust = 1, vjust = -.2, size=3)+
   annotate("text", x = 58.2, y = 0, label = "CANADA", hjust = 1, vjust = -.2, colour = "White",size=3)+
@@ -75,12 +76,11 @@ dev.off()
 
 
 
-
 # Percent index by year barplot
 indplot <- basePlot +
-  geom_bar(data = indices, aes(x = factor(year), y = pCan), 
+  geom_bar(data = pcan, aes(x = factor(year), y = percent), 
            stat = "identity", fill = "grey30", width=.8)+
-  scale_y_continuous(limits = c(0, 54), expand = c(0,0)) +
+  scale_y_continuous(limits = c(0, 52), expand = c(0,0)) +
   labs(x = "year", y = "Percentage of Hake in Canadian waters")  +
   theme(legend.key.height = unit(.4,"cm"), 
         legend.key.width = unit(.4,"cm"),
@@ -102,9 +102,9 @@ dev.off()
 
 # Biomass index by year barplot
 bioindplot <- basePlot +
-  geom_bar(data = indices, aes(x = factor(year), y = bCan), 
+  geom_bar(data = bcan, aes(x = factor(year), y = krig), 
            stat = "identity", fill = "grey30", width=.8)+
-  scale_y_continuous(limits = c(0, 650), expand = c(0,0)) +
+  scale_y_continuous(limits = c(0, 640), expand = c(0,0)) +
   labs(x = "year", y = "Hake biomass (kmt) in Canadian waters")  +
   theme(legend.key.height = unit(.4,"cm"), 
         legend.key.width = unit(.4,"cm"),

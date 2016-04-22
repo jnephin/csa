@@ -1,0 +1,134 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx} 
+\usepackage{pstricks} 
+\usepackage{epstopdf}
+\graphicspath{{C:/Users/NephinJ/Documents/Hake/1992-2013/Figures/}}
+\usepackage[left=3cm,right=3cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage[font=small]{caption}
+\usepackage{placeins} %\FloatBarrier
+\usepackage{hyperref}
+\usepackage{pdflscape} %landscape
+\usepackage{longtable}
+\usepackage{booktabs}
+\setlength{\aboverulesep}{0pt}
+\setlength{\belowrulesep}{0pt}
+\setlength\heavyrulewidth{1.1pt}
+\setlength\lightrulewidth{.4pt}
+\usepackage{array}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\renewcommand{\arraystretch}{1.2}
+
+\definecolor{bb}{HTML}{008F77}
+\definecolor{gg}{HTML}{0052A3}
+\definecolor{dr}{HTML}{8F0018}
+\hypersetup{colorlinks, linkcolor=dr,urlcolor=dr}
+
+\newcommand{\inp}[1]{\textcolor{bb}{#1}}
+\newcommand{\out}[1]{\textcolor{gg}{#1}}
+
+%%%%%%%%%%%%%%%
+\begin{document}
+\title{Environmental drivers of the distribution of migratory Pacific Hake (\textit{Merluccius productus}) in Canada}
+\maketitle
+\small
+\tableofcontents
+\normalsize
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Methods}
+
+TrackRegion.Map.pdf
+
+
+\FloatBarrier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}
+
+\subsection{Spatial distribution of Pacific hake}
+
+Biomass/Map/Krig.Biomass.Map.1998-2015.pdf
+Biomass/StockBiomass.Bar.pdf
+Indices/AggregatedIndex_anomaly.pdf
+Indices/PatchinessIndex_anomaly.pdf
+
+\subsection{Size and age of Pacific hake stock}
+
+Ages/FreqAge.Curves.Strata.pdf
+Indices/AgeIndex_anomaly.pdf
+Indices/LengthIndex_anomaly.pdf
+
+\subsection{Migration Indices}
+Migration/PercentBiomass.Curves.pdf
+Indices/MigrationIndex_anomaly.pdf
+Correlate/Migration.Indices.pdf
+
+Correlate/Migration.Age.Indices.pdf
+Correlate/Migration.Stock.Indices.pdf
+
+\subsection{Sea surface temperature, surface chlorophyll and upwelling}
+SST/Maps/SSTanom.1998-2015.Map.Spring.pdf
+SST/Maps/SSTanom.1998-2015.Map.Summer.pdf
+CHL/Maps/CHLanom.1998-2015.Map.Spring.pdf
+CHL/Maps/CHLanom.1998-2015.Map.Summer.pdf
+
+Indices/SSTIndex_anomly.pdf
+Indices/CHLIndex_anomly.pdf
+Indices/UpwelIndex_anomly.pdf
+
+Correlate/SST.Migration.pdf
+Correlate/CHL.Migration.pdf
+Correlate/Upwel.Migration.pdf
+
+\subsection{Hake migration model} 
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error &  P-value \\ 
+  \hline
+(Intercept) & -0.5590 & 2.4955 & 0.8302 \\ 
+  dat\$SST Canada & 12.0789 & 4.1288 & 0.0264 \\ 
+  dat\$Chlorophyll US & -5.7803 & 2.0976 & 0.0330 \\ 
+  dat\$Upwelling 33 Lat & -0.1318 & 0.0443 & 0.0248 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+Model/PercenCan.PartialReg.pdf
+
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = 1]{{Maps/TrackRegion.1992-2013.Map}.pdf}
+\caption{Spatial area (outlined in red) which encompasses all the acoustic survey tracks (shown in black) from 1995 to 2013 and a 30 km buffer. Figure created with script: `Track.Polygon.Map.R'}
+\label{TrackRegion}
+\end{figure}
+
+
+\FloatBarrier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discussion}
+
+
+\FloatBarrier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Conclusion}
+
+
+
+%%%%%%%%%%%%%%
+\end{document}

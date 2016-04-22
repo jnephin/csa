@@ -198,7 +198,7 @@ ageind$sign <- "p"
 ageind$sign[ageind$anom <= 0] <- "n"
 
 # strip labels
-labstrp <- data.frame(grp = c("Canada","Total stock"),x = rep("2001",2), y = rep(1.8,2))
+labstrp <- data.frame(grp = c("Canada","Total stock"),x = rep("2007",2), y = rep(1.8,2))
 
 # plot age anomaly indices
 aplot <- basePlot +

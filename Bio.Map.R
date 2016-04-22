@@ -89,13 +89,13 @@ arrowbar$year <- rep(1998,nrow(arrowbar))
 # strip names
 strptitle <- data.frame(year = c(1998, 2001, 2003, 2005, 2007, 2009, 2011, 2012, 2013, 2015))
 strptitle$y <- 6500000
-strptitle$x <- -1000000
+strptitle$x <- -1050000
 
 
 
 
-#########################################################################################
-#########################################################################################
+################################################################################
+################################################################################
 # survey map
 
 # load track data 
@@ -121,7 +121,7 @@ surveyPlot <- ggplot(data = NULL) +
   geom_point(data = track[track$zeros == "1",], 
              aes(x = Lon, y = Lat, group=year, size = Biomass.density/1000), 
              pch = 1, colour = "#D60019",stroke = .25) +
-  scale_size_area(max_size = 8, name = expression(paste("Biomass mt/",nmi^2)),
+  scale_size_area(max_size = 7, name = expression(paste("Biomass mt/",nmi^2)),
                   breaks = c(500,1000,2000,4000,6000)) +
   facet_wrap( ~ year, nrow = 2) +
   geom_line(data = grats, aes(x=long, y=lat, group = group), size=.01, colour = "grey55") +
@@ -145,7 +145,7 @@ surveyPlot <- ggplot(data = NULL) +
   labs(x="", y="") +
   scale_x_continuous(breaks = xlabs$x, labels = xlabs$xlab) +
   scale_y_continuous(breaks = ylabs$y, labels = ylabs$ylab) +
-  coord_fixed(xlim=c(-1700000, -800000), ylim=c(3675000, 6500000)) +
+  coord_fixed(xlim=c(-1700000, -900000), ylim=c(3675000, 6500000)) +
   theme(panel.border = element_rect(fill=NA, colour="black", size = .1),
         panel.background = element_rect(fill="white",colour="white"),
         strip.background = element_blank(),
@@ -162,10 +162,10 @@ surveyPlot <- ggplot(data = NULL) +
         plot.margin = unit(c(.2,6,.2,.2), "lines"), # top, right, bottom, and left 
         panel.margin = unit(0.2, "lines")) +
   guides(size = guide_legend(override.aes = list(stroke=1)))
-surveyPlot
+#surveyPlot
 
 # Save as a pdf
-pdf("Figures/Biomass/Maps/Survey.Biomass.Map.1998-2015.pdf", width=6, height=6) 
+pdf("Figures/Biomass/Maps/Survey.Biomass.Map.1998-2015.pdf", width=5.5, height=6) 
 surveyPlot
 dev.off()
 
@@ -173,47 +173,30 @@ dev.off()
 
 
 
-#########################################################################################
-#########################################################################################
+################################################################################
+################################################################################
 # krig  map
 
 # load kriged data 
 load("Data/Krig.1998-2015.rda") # krig
 
-# loop through years to rasterize
-krig_ras <- NULL
-for (i in c(1998,2001,2003,2005,2007,2009,2011,2012,2013,2015)){
-  
-  # project
-  tmp <- krig[krig$year == i,]
-  coordinates(tmp) <- ~Lon + Lat
-  proj4string(tmp) <- CRS("+proj=longlat")
-  tmp <- spTransform(tmp, Proj)
-  
-  # Make an evenly spaced raster, the same extent as original data
-  e <- extent(tmp)
-  
-  # Create raster mask, rasterize and convert back to points
-  r <- raster(nrows =  120, ncols = 35, ext = e)
-  rf <- rasterize(tmp, r, field = "Biomass.density", fun = mean)
-  ras <- data.frame(rasterToPoints(rf)) 
-  ras$year <- i
-  krig_ras <- rbind(krig_ras, ras)
-}
 
-# colour palette
-pal <- rev(brewer.pal(9, "Spectral"))
+# project
+coordinates(krig) <- ~Lon + Lat
+proj4string(krig) <- CRS("+proj=longlat")
+krig <- spTransform(krig, Proj)
+krig <- as.data.frame(krig)
 
 
 # plot
 krigPlot <- ggplot(data = NULL) +
   geom_polygon(data = m.world, aes(x=long, y=lat, group = group), 
                fill = "gray75", colour = "gray65",size = 0.01) +
-  geom_raster(data = krig_ras, 
-             aes(x = x, y = y, group=year, fill = layer/1000)) +
-  scale_fill_gradientn(colours = pal, 
-                       values = c(0,.1,.15,.2,.3,.5,.7,.8,1),
-                      name = expression(paste("Biomass \nmt / 25",nmi^2))) +
+  geom_point(data = krig, 
+             aes(x = Lon, y = Lat, group=year, size = Biomass.density/1000), 
+             pch = 1, colour = "#D60019",stroke = .25) +
+  scale_size_area(max_size = 6, name = expression(paste("Biomass\n mt / 6.25 ",nmi^2)),
+                  breaks = c(500,1000,5000,10000,15000)) +
   facet_wrap( ~ year, nrow = 2) +
   geom_line(data = grats, aes(x=long, y=lat, group = group), 
             size=.01, colour = "grey55") +
@@ -238,7 +221,7 @@ krigPlot <- ggplot(data = NULL) +
   labs(x="", y="") +
   scale_x_continuous(breaks = xlabs$x, labels = xlabs$xlab) +
   scale_y_continuous(breaks = ylabs$y, labels = ylabs$ylab) +
-  coord_fixed(xlim=c(-1600000, -900000), ylim=c(3675000, 6500000)) +
+  coord_fixed(xlim=c(-1700000, -900000), ylim=c(3675000, 6500000)) +
   theme(panel.border = element_rect(fill=NA, colour="black", size = .1),
         panel.background = element_rect(fill="white",colour="white"),
         strip.background = element_blank(),
@@ -252,7 +235,7 @@ krigPlot <- ggplot(data = NULL) +
         legend.title = element_text(size=9, face="plain"),
         legend.background = element_blank(), legend.key = element_blank(),
         legend.justification = c(0,1), legend.position = c(1,.7), 
-        plot.margin = unit(c(.2,6,.2,.2), "lines"), # top, right, bottom, and left 
+        plot.margin = unit(c(.2,6,.2,.2), "lines"), #top,right,bottom,left 
         panel.margin = unit(0.2, "lines")) +
   guides(size = guide_legend(override.aes = list(stroke=1)))
 krigPlot
@@ -260,7 +243,7 @@ krigPlot
 
 
 # Save as a pdf
-pdf("Figures/Biomass/Maps/Krig.Biomass.Map.1998-2015.pdf", width=6, height=6) 
+pdf("Figures/Biomass/Maps/Krig.Biomass.Map.1998-2015.pdf", width=5.5, height=6) 
 krigPlot
 dev.off()
 

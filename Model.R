@@ -1,6 +1,9 @@
 require(ggplot2)
 require(MASS)
 require(car)
+require(xtable)
+require(reshape2)
+require(gridExtra)
 source("base.plot.R")
 
 # response
@@ -48,8 +51,10 @@ cor.dat # mla - mage, sstus - sstcan
 # pcan regression
 
 # percent in canada all data
-pcanmodel <- lm(response$pcan ~  dat$sup + dat$sstus) 
-pcanmodel <- lm(response$pcan ~  dat$sstcan + dat$sup + dat$chlus) 
+pcanmodel <- lm(response$pcan ~  dat$mage+dat$sstcan+dat$sstus+dat$chlcan+
+                  dat$chlus+dat$sup+dat$nup) 
+pcanmodel <- lm(response$pcan ~  dat$sstcan + dat$chlus + dat$chlcan + dat$sup) 
+pcanmodel <- lm(response$pcan ~  dat$sstcan + dat$chlus + dat$sup) 
 summary(pcanmodel)
 anova(pcanmodel)
 
@@ -65,13 +70,23 @@ plot(response$pcan,pcanmodel$fitted.values)
 # partial regression plots
 avPlots(pcanmodel)
 
+# model without influencial points
+ind <- c(3)
+pcanmodel.up <- lm(response$pcan[-ind] ~  dat$sstcan[-ind] + dat$chlus[-ind] + dat$sup[-ind])
+summary(pcanmodel.up)
+anova(pcanmodel.up)
+avPlots(pcanmodel.up)
+
+
 
 
 ####################################################################
 # pcan regression
 
 # percent in canada all data
-bcanmodel <- lm(response$bcan ~  dat$sstcan)
+bcanmodel <- lm(response$bcan ~  dat$mage+dat$sstcan+dat$chlcan+
+                  dat$chlus+dat$sup+dat$nup) 
+bcanmodel <- lm(response$bcan ~  dat$sstcan+dat$chlcan+ dat$chlus+dat$nup) 
 summary(bcanmodel)
 anova(bcanmodel)
 
@@ -87,7 +102,11 @@ plot(response$pcan,bcanmodel$fitted.values)
 # partial regression plots
 avPlots(bcanmodel)
 
-
+# model without influencial points
+ind <- c(2,5)
+bcanmodel.up <- lm(response$bcan[-ind] ~  dat$sstcan[-ind] + dat$chlcan[-ind] + dat$chlus[-ind] +dat$nup[-ind])
+summary(bcanmodel.up)
+avPlots(bcanmodel.up)
 
 
 
@@ -95,7 +114,9 @@ avPlots(bcanmodel)
 # mig5 regression
 
 # percent in canada all data
-mig5model <- lm(response$amig5 ~ dat$sstcan + dat$sup)
+mig5model <- lm(response$amig5 ~  dat$sstcan+dat$chlcan+
+                  dat$chlus+dat$sup+dat$nup) 
+mig5model <- lm(response$amig5 ~  dat$sstcan+dat$chlus+dat$sup) 
 summary(mig5model)
 anova(mig5model)
 
@@ -112,8 +133,55 @@ plot(response$pcan,mig5model$fitted.values)
 avPlots(mig5model)
 
 
+# model without influencial points (not sig)
+ind <- c(1,4)
+mig5model.up <- lm(response$amig5[-ind] ~  dat$sstcan[-ind] + dat$chlus[-ind] + dat$sup[-ind])
+summary(mig5model.up)
+avPlots(mig5model.up)
 
 ####################################################################
 # mig10 regression
 
 # no sig correlation
+
+
+
+####################################################################
+####################################################################
+# summary outputs
+
+
+# latex table
+xtable(summary(pcanmodel))
+
+# partial regression plots
+part <- as.data.frame(cbind(avPlots(pcanmodel)[[1]] ,avPlots(pcanmodel)[[2]],
+                        avPlots(pcanmodel)[[3]]))
+names(part) <- sub(".*[$]","",names(part))
+colnames(part)[c(1,3,5)] <- c("SST_Can", "Chloro_US", "Upwel_33")
+
+#plot
+for (i in c(1,3,5)){
+  tmp <- part[,i:(i+1)]
+  val <- names(tmp[1])
+  name <- gsub("_"," ",val)
+  parplot <- basePlot + geom_smooth(data =  tmp, 
+                                    aes_string(x = val, y = "pcan"), 
+                method = "lm", se = FALSE, size = .5, colour =  "#D60019")
+    parplot <- parplot + geom_point(data =  tmp, 
+                                    aes_string(x = val, y = "pcan"), 
+                                    size=1.5, pch=19)
+    parplot <- parplot + labs(x =paste0(name, " | Other"), 
+                              y ="Response | Other")
+    parplot <- parplot + theme(plot.margin = unit(c(.4,.2,.2,.2), "lines"),
+                          axis.title.y= element_text(margin=margin(r = -2)))
+  assign(val,parplot)
+}
+
+###############
+# Save as a pdf
+pdf("Figures/Model/PercenCan.PartialReg.pdf", width=7.5, height=2.7) 
+grid.arrange(SST_Can,Chloro_US,Upwel_33, nrow=1)
+dev.off()
+
+

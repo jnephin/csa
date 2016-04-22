@@ -8,16 +8,16 @@ source("base.plot.R")
 
 
 ##################################
-#--------     TRACK     ---------#
+#--------     STOCK     ---------#
 ##################################
 
-# Load track data
-load("Data/Track.1998-2015.rda") #track
+# Load krig data
+load("Data/Krig.1998-2015.rda") #krig
 
 #stock biomass kmt
-stock <- data.frame(year = c(1998,2001,2003,2005,2007,2009,2011,2012,2013,2015),
-                    krig = c(1227.35, 795.825, 1882.773, 1020.52, 825.38, 
-                             1301.31, 596.28,1220.65, 1789.72, 2003.22))
+stock <- aggregate(Biomass.density ~ year, data = krig, sum)
+stock$krig <- stock$Biomass.density/1000/1000
+stock <- stock[,-2]
 
 # anomaly
 stock$anom <- stock$krig - mean(stock$krig)
@@ -46,12 +46,24 @@ anomplot
 dev.off()
 
 
-# plot stock biomass 
+# plot stock biomass in total and canada
+
+#combine data
+load("Data/Migration.total.Index.rda") #bcan
+load("Data/StockBiomass.Index.rda") #stock
+stock$krig <- stock$krig - bcan$krig
+canstock <- rbind(stock,bcan)
+canstock$grp <- c(rep("US",10),rep("Canada",10))
+
 stockplot <- basePlot +
-  geom_bar(data = stock, aes(x = factor(year), y = krig),
-           width = .8, show.legend = FALSE, stat = "identity")+
-  labs(x = "", y = "Stock biomass (kmt)")+
-  scale_y_continuous(expand = c(0,0), limits = c(0,2050))
+  geom_bar(data = canstock, aes(x = factor(year), y = krig, fill = grp),
+           width = .8, stat = "identity")+
+  labs(x = "Years", y = "Stock biomass (kmt)")+
+  scale_y_continuous(expand = c(0,0), limits = c(0,2050))+
+  scale_fill_manual(values = c("#56B4E9", "#E69F00"), name = "") +
+  theme(legend.position = c(.5,.95), legend.direction = "horizontal", 
+        legend.justification = c(.5,1),
+        legend.key.height = unit(.4,"cm"), legend.key.width = unit(.4,"cm"))
 stockplot
 
 # Save as a pdf
@@ -65,6 +77,9 @@ dev.off()
 ##          ZEROS - PATCHINESS          ##
 ##########################################
 
+
+# Load track data
+load("Data/Track.1998-2015.rda") #track
 
 # How many zero data points in each year?
 df <- NULL

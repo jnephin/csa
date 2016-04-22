@@ -150,7 +150,7 @@ cor.up$ind[cor.up$ind == "pcan"] <- "Percent biomass in Canadian waters"
 
 # plot migration index upwelling correltion
 migup <- basePlot +
-  geom_point(data = cor.up, aes(x = month, y = cor, shape = sig, colour = area), 
+  geom_point(data = cor.up, aes(x = month, y = cor, shape = sig, colour = area),
              size = 2)+
   geom_line(data = cor.up, aes(x = month, y = cor, group = area, colour = area))+
   facet_grid(~ind)+
@@ -178,7 +178,7 @@ dev.off()
 ############################################################################
 # april, may june anomaly index
 
-upind <- upwel[upwel$Month %in% c("APR","MAY","JUN","JUL"),] 
+upind <- upwel[upwel$Month %in% c("JUN","JUL","AUG"),] 
 upind <- aggregate(anom ~ LAT + YEAR, mean, data = upind)
 
 # save south and north index

@@ -57,7 +57,7 @@ LatSpringPlot
  
 ###############
 # Save as a pdf
-pdf("Figures/CHL/ZonalSpringTemp.1998-2015.pdf", width=5.5, height=3.5) 
+pdf("Figures/CHL/ZonalSpringChloro.1998-2015.pdf", width=5.5, height=3.5) 
 LatSpringPlot
 dev.off()
 
@@ -88,7 +88,7 @@ LatSummerPlot
 
 ###############
 # Save as a pdf
-pdf("Figures/CHL/ZonalSummerTemp.1998-2015.pdf", width=5.5, height=3.5) 
+pdf("Figures/CHL/ZonalSummerChloro.1998-2015.pdf", width=5.5, height=3.5) 
 LatSummerPlot
 dev.off()
 
@@ -124,7 +124,7 @@ regPlot
 
 ###############
 # Save as a pdf
-#("Figures/CHL/RegionalMonthlyTemp.1998-2015.pdf", width=6, height=3.5) 
+#("Figures/CHL/RegionalMonthlyChloro.1998-2015.pdf", width=6, height=3.5) 
 #regPlot
 #dev.off()
 
@@ -159,7 +159,7 @@ countryPlot
 
 ###############
 # Save as a pdf
-pdf("Figures/CHL/RegionalCountryTemp.1998-2015.pdf", width=5, height=4.5) 
+pdf("Figures/CHL/RegionalCountryChloro.1998-2015.pdf", width=5, height=4.5) 
 countryPlot
 dev.off()
 

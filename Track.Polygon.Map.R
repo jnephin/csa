@@ -26,7 +26,24 @@ m.world <- fortify(smooth.world)
 
 ## track polygon
 load("Data/TrackPolygon.rda")
+bb.poly <- spTransform(bb.poly, Proj)
 bb <- fortify(bb.poly)
+
+
+##################################
+#-------- STRATA DATA ---------#
+
+strata <- read.csv("Data/Strata.csv", header=T)[-6,]
+
+# generate map gridlines
+strat <- gridlines(land, easts=c(-130,-125, -120), 
+                   norths=strata$lat_upper, ndiscr = 20) 
+dfs <- data.frame(z = c(1,2), row.names=sapply(slot(strat, "lines"), 
+                                               function(x) slot(x, "ID")))
+strat.df <- SpatialLinesDataFrame(strat, data = dfs)
+strat.proj <- spTransform(strat.df, CRS=Proj)
+strat.grat <- fortify(strat.proj)
+strat.grat <- strat.grat[strat.grat$id == "NS",]
 
 
 
@@ -39,6 +56,7 @@ df <- data.frame(z = c(1,2), row.names=sapply(slot(grat, "lines"), function(x) s
 grat.df <- SpatialLinesDataFrame(grat, data = df)
 proj.grat <- spTransform(grat.df, CRS=Proj)
 grats <- fortify(proj.grat)
+grats <- grats[grats$id == "EW",]
 
 
 # map axis labels
@@ -50,7 +68,8 @@ xlabs <- spTransform(xlabels, Proj)
 xlabs <- as.data.frame(xlabs)
 
 
-ylabels <- data.frame(x=c(-134, -139),y=c(40,50))
+ylabels <- data.frame(x=c(-134,-135.25,-136.6,-138,-139.5),
+                      y=strata$lat_upper)
 ylabels$ylab <- ylabels$y
 coordinates(ylabels) <- ~x + y
 proj4string(ylabels) <- CRS("+proj=longlat")
@@ -111,50 +130,56 @@ track <- as.data.frame(proj.track)
 
 
 
-
 ###############################################################################
 ##############################################################################
 #plots
 
 extentplot <- ggplot(data = NULL) +
-  # survey track
-geom_point(data = track, aes(x = Lon, y = Lat), size = .1, pch = 16) +
+  #land polygon
+  geom_line(data = strat.grat, aes(x=long, y=lat, group = group), 
+            size=1, colour = "black") +
   #land polygon
   geom_polygon(data = m.world, aes(x=long, y=lat, group = group), 
                fill = "gray75", colour = "gray65",size = 0.01) +
   # track polygon
-geom_polygon(data = bb, aes(x = long, y = lat), fill=NA, colour = "red", size = 1) + 
-  # cities
-geom_point(data = cities, aes(x = X, y = Y), pch=20, colour = "black",  size = 2) +
-geom_text(data = cities, aes(x = X, y = Y, label=label), colour = "black", size = 2.5, hjust = -.2) +
+geom_polygon(data = bb, aes(x = long, y = lat), 
+             fill=NA, colour = "red", size = 1) + 
   # axes
   labs(x="", y="") +
   scale_x_continuous(breaks = xlabs$x, labels = xlabs$xlab) +
   scale_y_continuous(breaks = ylabs$y, labels = ylabs$ylab) +
   # grid, scalebar and north arrow
-  geom_line(data = grats, aes(x=long, y=lat, group = group), size=.01, colour = "grey55") +
+  geom_line(data = grats, aes(x=long, y=lat, group = group), 
+            size=.01, colour = "grey55") +
   geom_segment(data = scalebar, 
                aes(x = x, y = y, xend = end.x, yend = end.y), 
                size = 1.2, colour = "black", lineend = "butt") +
   geom_text(data = scalebar, 
             aes(x = xlab, y = y+80000, label =lab), 
-            size = 2.5, colour = "black") +
+            size = 3, colour = "black") +
   geom_segment(data = arrowbar, 
                aes(x = x, y = y, xend = end.x, yend = end.y), 
                size = .5, colour = "black", lineend = "round",
                arrow = arrow(angle = 45, type = "open", 
                              length = unit(.3, "cm"))) +
   geom_text(data = arrowbar, 
-            aes(x = mean(c(x,end.x)), y = mean(c(y,end.y)), label = lab, angle = angle), 
+            aes(x = mean(c(x,end.x)), y = mean(c(y,end.y)), 
+                label = lab, angle = angle), 
             size = 5, colour = "black", fontface = 2) +
+  # cities
+  geom_point(data = cities, aes(x = X, y = Y), 
+             pch=20, colour = "black",  size = 2) +
+  geom_text(data = cities, aes(x = X, y = Y, label=label), 
+            colour = "black", size = 3, hjust = -.2) +
 #themes 
-coord_fixed(xlim=c(-1900000, -500000), ylim=c(3500000, 6600000))  +
+coord_fixed(xlim=c(-1900000, -500000), ylim=c(3500000, 6500000))  +
 theme(panel.border = element_rect(fill=NA, colour="black", size = .1),
                      panel.background = element_rect(fill="white",colour="white"),
                      panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(),
                      axis.text = element_text(size=8, colour = "black"),
-                     axis.ticks.length = unit(0.1,"cm"),
+                     axis.text.y = element_text(size=10, colour = "black", hjust=1.1),
+                     axis.ticks = element_blank(),
                      axis.title = element_blank(),
                      plot.margin = unit(c(.5,.5,.3,.3), "lines")) # top, right, bottom, and left 
 extentplot
