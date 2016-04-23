@@ -1,6 +1,7 @@
 require(ggplot2)
 require(plyr)
 require(reshape2)
+require(gridExtra)
 source("base.plot.R")
 
 #load age length key
@@ -8,6 +9,20 @@ load("Data/Age.Length.Key.rda") #alk
 
 #load length by strata data
 load("Data/Length.Strata.rda") #mlen
+
+
+
+
+
+############################################################################
+############################################################################
+
+# --------------------------     Age Index    ----------------------------#
+
+############################################################################
+############################################################################
+
+
 
 
 ############################################################################
@@ -105,7 +120,7 @@ stplot
 
 ###############
 # Save as a pdf
-pdf("Figures/Ages/FreqAge.Curves.Strata.pdf", width=5, height=3.5) 
+pdf("Figures/Ages/FreqAge.Curves.Strata.pdf", width=4, height=2.5) 
 stplot
 dev.off()
 
@@ -185,9 +200,100 @@ save(meanagecan, file = "Data/Mean.Age.Can.rda")
 
 
 
+
+
+
+
+
+
+
+
 ############################################################################
 ############################################################################
-# plot indices
+
+# --------------------------     Size Index   ----------------------------#
+
+############################################################################
+############################################################################
+
+
+
+
+############################################################################
+############################################################################
+
+# load specimen age and length data
+data.list <- list.files(path = "Data/biological", pattern = "specimen*")
+spec <- NULL
+for(i in data.list){
+  tmp <- read.csv(file.path("Data/biological",i),header=T)
+  tmp <- tmp[,c("HAUL","SPECIES_CODE","SEX","LENGTH","WEIGHT","AGE")]
+  name <- sub(".csv", "", i)
+  id <- strsplit(name, "_")[[1]]
+  tmp$year <- id[2]
+  spec <- rbind(spec, tmp)
+}
+
+# remove all non hake species (hake species code: 22500)
+spec <- spec[spec$SPECIES_CODE == 22500,]
+
+# remove NA age's
+spec <- spec[!is.na(spec$AGE),]
+
+# round lengths to the nearest centimeter
+spec$LENGTH <- round(spec$LENGTH)
+
+# save specimen data
+save(spec, file = "Data/Specimen.rda")
+
+
+############################################################################
+############################################################################
+# size index 
+
+# load haul strata data
+load("Data/Haul.Strata.rda") #haul
+
+# merge specimen and haul by strata data
+xyspec <- merge(spec, haul, by = c("HAUL","year"), all.x = T)
+
+# group by country
+xyspec$grp <- "US"
+xyspec$grp[xyspec$strata %in% 5:6] <- "Canada"
+
+
+# mean length at age 5
+mla <- ddply(spec[spec$AGE == 5,], .(year), summarise, 
+             mean = mean(LENGTH, na.rm=T),
+             se = sd(LENGTH, na.rm=T)/sqrt(length(unique(HAUL)))) # of trawls
+mlacan <- ddply(xyspec[xyspec$AGE == 5,], .(year, grp), summarise, 
+                mean = mean(LENGTH, na.rm=T),
+                se = sd(LENGTH, na.rm=T)/sqrt(length(unique(HAUL)))) # of trawls
+mlacan <- mlacan[mlacan$grp == "Canada",-2]
+
+# anomaly
+mla$anom <- mla$mean - mean(mla$mean)
+mlacan$anom <- mlacan$mean - mean(mlacan$mean)
+
+# save length at age 5 size index
+save(mla,file="Data/A5.Length.Index.rda")
+
+
+
+
+############################################################################
+############################################################################
+
+# --------------------------     Plot Index    ----------------------------#
+
+############################################################################
+############################################################################
+
+
+
+
+############################################################################
+# age indices
 
 # combine all age indices
 ageind <- rbind(meanage,meanagecan)
@@ -197,33 +303,73 @@ ageind$grp <- c(rep("Total stock",nrow(meanage)),rep("Canada",nrow(meanagecan)))
 ageind$sign <- "p"
 ageind$sign[ageind$anom <= 0] <- "n"
 
-# strip labels
-labstrp <- data.frame(grp = c("Canada","Total stock"),x = rep("2007",2), y = rep(1.8,2))
-
 # plot age anomaly indices
 aplot <- basePlot +
   facet_wrap(~grp, nrow = 1)+
   geom_bar(data = ageind, aes(x = factor(year), y = anom, fill = factor(sign)),
            width = .7, show.legend = FALSE, stat = "identity")+
   geom_hline(yintercept = 0, size = .1, linetype = 1, colour= "black")+
-  geom_text(data = labstrp, aes(x = factor(x), y =  y, label = grp), 
-            size = 3, hjust = 0)+
   labs(x = "", y = "Mean age anomaly")+
+  scale_y_continuous(expand=c(0.02,0))+
   scale_fill_manual(values = c("#377eb8","#e41a1c"))+
-  theme(strip.text = element_blank(),
-        panel.margin = unit(.2, "lines"))
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.title.x = element_blank(),
+        panel.margin = unit(.2, "lines"),
+        plot.margin = unit(c(.2,.2,0,.2), "lines"))
 aplot
+
+
+############################################################################
+# size indices
+
+# combine all age indices
+mlaind <- rbind(mla,mlacan)
+mlaind$grp <- c(rep("Total stock",nrow(mla)),rep("Canada",nrow(mlacan)))
+
+# positive / negative label
+mlaind$sign <- "p"
+mlaind$sign[mlaind$anom <= 0] <- "n"
+
+# x axis
+yrs <- c("98","01","03","05","07","09","11","12","13","15")
+
+
+# plot size anomaly indices
+sizeplot <- basePlot +
+  facet_wrap(~grp, nrow = 1)+
+  geom_bar(data = mlaind, aes(x = factor(year), y = anom, fill = factor(sign)),
+           width = .7, show.legend = FALSE, stat = "identity")+
+  geom_hline(yintercept = 0, size = .1, linetype = 1, colour= "black")+
+  labs(x = "Years", y = "Age-5 fork length anomaly")+
+  scale_fill_manual(values = c("#377eb8","#e41a1c"))+
+  scale_x_discrete(labels = yrs)+
+  scale_y_continuous(expand=c(0.02,0))+
+  theme(strip.text = element_blank(),
+        panel.margin = unit(.2, "lines"),
+        plot.margin = unit(c(.1,.2,.2,.2), "lines"))
+sizeplot
 
 
 # Save as a pdf
-pdf("Figures/Indices/AgeIndex_anomaly.pdf", width=7, height=3) 
-aplot
+pdf("Figures/Indices/AgeSizeIndex_anomaly.pdf", width=4.8, height=4.3) 
+grid.arrange(aplot,sizeplot)
 dev.off()
 
 
 
 
 
+
+
+
+############################################################################
+############################################################################
+
+# ----------------------   Age Distribution Plots    ----------------------#
+
+############################################################################
+############################################################################
 
 
 
@@ -265,8 +411,8 @@ yrplot <- basePlot +
               aes(x =  factor(year), y = Age),
               size = .1, width = .8, pch=1, colour = "grey80")+
   geom_point(data = meanage,
-              aes(x =  factor(year), y = mean),
-              size = 2,  pch=16, colour = "red")+
+             aes(x =  factor(year), y = mean),
+             size = 2,  pch=16, colour = "red")+
   geom_violin(data = rages, show.legend = FALSE, adjust = 3,
               aes(x =  factor(year), y = Age), scale = 'width',
               size = .5, fill = NA, colour = "grey20", width = .8)+
@@ -285,8 +431,8 @@ dev.off()
 # plot bubbles
 yrbubble <- basePlot +
   geom_point(data = peryr, show.legend = FALSE,
-              aes(x =  factor(year), y = age, size = value),
-              pch=1, colour = "black")+
+             aes(x =  factor(year), y = age, size = value),
+             pch=1, colour = "black")+
   geom_point(data = meanage,
              aes(x =  factor(year), y = mean),
              size = 2,  pch=16, colour = "red")+
@@ -346,9 +492,4 @@ yrbubblecan
 pdf("Figures/Ages/FreqAge.Can.Bubble.pdf", width=6, height=5) 
 yrbubblecan
 dev.off()
-
-
-
-
-
 

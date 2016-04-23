@@ -48,7 +48,7 @@ cumplot
 
 #################################################################
 # Save as a pdf
-pdf("Figures/Migration/CumBiomass.Curves.pdf", width=5.5, height=3) 
+pdf("Figures/Migration/CumBiomass.Curves.pdf", width=4.8, height=2.5)
 cumplot
 dev.off()
 
@@ -56,20 +56,23 @@ dev.off()
 
 ## Plot percent biomass v. Latitude
 perplot <- basePlot +
-  geom_rect(data = data.frame(y= -0.01, ymax = 1.01, x = 48.4, xmax = 58.5),aes(xmin = x, xmax = xmax, ymin = y, ymax = ymax), fill = "grey80") +
-  geom_path(data = cumkrig, aes(x = Latitude, y = cdf, colour = factor(year)), size = .7) +
+  geom_rect(data = data.frame(y= -0.01, ymax = 101, x = 48.4, xmax = 58.5),
+            aes(xmin = x, xmax = xmax, ymin = y, ymax = ymax), fill = "grey80") +
+  geom_path(data = cumkrig, aes(x = Latitude, y = cdf*100, colour = factor(year)), 
+            size = .7) +
   scale_colour_manual(values = pal, name = "")+
-  annotate("text", x = 48.2, y = 0, label = "US", hjust = 1, vjust = -.2, size=3)+
-  annotate("text", x = 58.2, y = 0, label = "CANADA", hjust = 1, vjust = -.2, colour = "White",size=3)+
-  coord_cartesian(xlim = c(34,58.5), ylim= c(-0.01,1.01), expand = c(0,0))+
-  labs(x = "Latitude", y = "Biomass Percentile") +
+  annotate("text", x = 48.1, y = 4, label = "US", hjust = 1, size=3)+
+  annotate("text", x = 48.6, y = 4, label = "CANADA", 
+           hjust = 0, colour = "White",size=3)+
+  coord_cartesian(xlim = c(34,58.5), ylim= c(-0.01,101), expand = c(0,0))+
+  labs(x = "Latitude", y = "Cumulative Biomass (%)") +
   theme(legend.key.height = unit(.4,"cm"), legend.key.width = unit(.3,"cm"),
-        legend.justification = c(0,1), legend.position = c(-0.01,1.1)) 
+        legend.justification = c(-0.03,1), legend.position = c(-0.03,1.15)) 
 perplot
 
 #################################################################
 # Save as a pdf
-pdf("Figures/Migration/PercentBiomass.Curves.pdf", width=5.5, height=3) 
+pdf("Figures/Migration/PercentBiomass.Curves.pdf", width=4.8, height=2.5) 
 perplot
 dev.off()
 

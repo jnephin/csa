@@ -38,9 +38,10 @@ splot <- basePlot +
   facet_wrap(~grp, nrow = 2)+
   geom_vline(xintercept = seq(6.5,60,6),size = .1, colour = "grey80")+
   geom_bar(data = mean.sst, aes(x = factor(date), y = anom, fill = factor(sign)),
-           show.legend = FALSE, stat = "identity", width=.8)+
-  geom_text(data = lab.sst, aes(x = factor(x), y =  y, label = grp), size = 3, hjust = 0)+
-  labs(x = "", y = "Monthly SST anomaly")+
+           show.legend = FALSE, stat = "identity", width=.75)+
+  geom_text(data = lab.sst, aes(x = factor(x), y =  y, label = grp), 
+            size = 3, hjust = c(0,-.7))+
+  labs(x = "Years", y = "Monthly SST anomaly")+
   scale_x_discrete(breaks = factor(mean.sst$date[21:30]),labels = years)+
   scale_fill_manual(values = c("#377eb8","#e41a1c"))+
   theme(strip.text = element_blank(),
@@ -48,7 +49,7 @@ splot <- basePlot +
 splot
 
 # Save as a pdf
-pdf("Figures/Indices/SSTIndex_anomly.pdf", width=6, height=5) 
+pdf("Figures/Indices/SSTIndex_anomly.pdf", width=6, height=3) 
 splot
 dev.off()
 
@@ -60,9 +61,10 @@ cplot <- basePlot +
   facet_wrap(~grp, nrow = 2)+
   geom_vline(xintercept = seq(6.5,60,6),size = .1, colour = "grey80")+
   geom_bar(data = mean.chl, aes(x = factor(date), y = anom, fill = factor(sign)),
-           show.legend = FALSE, stat = "identity", width=.8)+
-  geom_text(data = lab.chl, aes(x = factor(x), y =  y, label = grp), size = 3, hjust = 0)+
-  labs(x = "", y = "Monthly Chlorophyll anomaly")+
+           show.legend = FALSE, stat = "identity", width=.75)+
+  geom_text(data = lab.chl, aes(x = factor(x), y =  y, label = grp), 
+            size = 3, hjust = c(0,-.7))+
+  labs(x = "Years", y = "Monthly Chlorophyll anomaly")+
   scale_x_discrete(breaks = factor(mean.chl$date[21:30]),labels = years)+
   scale_fill_manual(values = c("#377eb8","#e41a1c"))+
   theme(strip.text = element_blank(),
@@ -70,7 +72,7 @@ cplot <- basePlot +
 cplot
 
 # Save as a pdf
-pdf("Figures/Indices/CHLIndex_anomly.pdf", width=6, height=5) 
+pdf("Figures/Indices/CHLIndex_anomly.pdf", width=6, height=3) 
 cplot
 dev.off()
 
@@ -131,27 +133,29 @@ cor.sst$sig[cor.sst$p < 0.05] <- "y"
 
 ## label strata
 cor.sst$ind <- as.character(cor.sst$ind)
-cor.sst$ind[cor.sst$ind == "mig5"] <- "Age-5 migration index"
-cor.sst$ind[cor.sst$ind == "bcan"] <- "Total biomass in Canadian waters"
-cor.sst$ind[cor.sst$ind == "pcan"] <- "Percent biomass in Canadian waters"
+cor.sst$ind[cor.sst$ind == "mig5"] <- "Percent age-5 biomass"
+cor.sst$ind[cor.sst$ind == "bcan"] <- "Total biomass"
+cor.sst$ind[cor.sst$ind == "pcan"] <- "Percent biomass"
 
 
 # plot migration index sst correltion
 migsst <- basePlot +
-  geom_point(data = cor.sst, aes(x = month, y = cor, shape = sig, colour = area), 
-             size = 2)+
-  geom_line(data = cor.sst, aes(x = month, y = cor, group = area, colour = area))+
+  geom_point(data = cor.sst,   size = 1.5,
+             aes(x = month, y = cor, shape = sig, colour = area))+
+  geom_line(data = cor.sst, size = .5,
+            aes(x = month, y = cor, group = area, colour = area))+
   facet_wrap(~ind)+
   geom_hline(yintercept = 0, linetype = 3, size = .4, colour = "grey30")+
-  labs(x = "Month", y = "Correlation coefficient")+
-  scale_colour_manual(values = c("#56B4E9", "#E69F00"), name = "", label = c("Canada","US"))+ 
+  labs(x = "Months", y = "Correlation coefficient")+
+  scale_colour_manual(values = c("grey60", "grey30"), name = "", 
+                      label = c("Canada","US"))+ 
   scale_shape_manual(values = c(1,15), guide = FALSE)+
-  theme(legend.position = c(.01,1.1), legend.justification = c(.01,1.1))
+  theme(legend.position = c(.67,.1), legend.justification = c(.01,.1))
 migsst
 
 
 # Save as a pdf
-pdf("Figures/Correlate/SST.Migration.pdf", width=7, height=3) 
+pdf("Figures/Correlate/SST.Migration.pdf", width=7, height=2.5) 
 migsst
 dev.off()
 
@@ -166,27 +170,29 @@ cor.chl$sig[cor.chl$p < 0.05] <- "y"
 
 ## label strata
 cor.chl$ind <- as.character(cor.chl$ind)
-cor.chl$ind[cor.chl$ind == "mig5"] <- "Age-5 migration index"
-cor.chl$ind[cor.chl$ind == "bcan"] <- "Total biomass in Canadian waters"
-cor.chl$ind[cor.chl$ind == "pcan"] <- "Percent biomass in Canadian waters"
+cor.chl$ind[cor.chl$ind == "mig5"] <- "Percent age-5 biomass"
+cor.chl$ind[cor.chl$ind == "bcan"] <- "Total biomass"
+cor.chl$ind[cor.chl$ind == "pcan"] <- "Percent biomass"
 
 
 # plot migration index chl correltion
 migchl <- basePlot +
-  geom_point(data = cor.chl, aes(x = month, y = cor, shape = sig, colour = area), 
-             size = 2)+
-  geom_line(data = cor.chl, aes(x = month, y = cor, group = area, colour = area))+
+  geom_point(data = cor.chl, size = 1.5,
+             aes(x = month, y = cor, shape = sig, colour = area))+
+  geom_line(data = cor.chl,  size = .5,
+            aes(x = month, y = cor, group = area, colour = area))+
   facet_wrap(~ind)+
   geom_hline(yintercept = 0, linetype = 3, size = .4, colour = "grey30")+
-  labs(x = "Month", y = "Correlation coefficient")+
-  scale_colour_manual(values = c("#56B4E9", "#E69F00"), name = "", label = c("Canada","US"))+ 
+  labs(x = "Months", y = "Correlation coefficient")+
+  scale_colour_manual(values = c("grey60", "grey30"), name = "", 
+                      label = c("Canada","US"))+ 
   scale_shape_manual(values = c(1,15), guide = FALSE)+
-  theme(legend.position = c(-.01,-.1), legend.justification = c(-.01,-.1))
+  theme(legend.position = c(.67,-.1), legend.justification = c(-.01,-.1))
 migchl
 
 
 # Save as a pdf
-pdf("Figures/Correlate/CHL.Migration.pdf", width=7, height=3) 
+pdf("Figures/Correlate/CHL.Migration.pdf", width=7, height=2.5) 
 migchl
 dev.off()
 

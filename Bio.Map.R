@@ -114,7 +114,7 @@ track <- as.data.frame(track)
 # plot
 surveyPlot <- ggplot(data = NULL) +
   geom_polygon(data = m.world, aes(x=long, y=lat, group = group), 
-               fill = "gray75", colour = "gray65",size = 0.01) +
+               fill = "gray75", colour = NA,size = 0.01) +
   #geom_point(data = track[track$zeros == "0",], 
    #          aes(x = Lon, y = Lat, group=year),
    #          size = .1, pch = 16, colour = "lightblue3",stroke = .1) +
@@ -154,7 +154,7 @@ surveyPlot <- ggplot(data = NULL) +
         strip.text = element_blank(),
         axis.title = element_blank(),
         axis.text = element_text(size=7, colour = "black"),
-        axis.ticks.length = unit(0.1,"cm"),
+        axis.ticks.length = unit(0.05,"cm"),
         legend.text = element_text(size=8),
         legend.title = element_text(size=9, face="plain"),
         legend.background = element_blank(), legend.key = element_blank(),
@@ -191,7 +191,7 @@ krig <- as.data.frame(krig)
 # plot
 krigPlot <- ggplot(data = NULL) +
   geom_polygon(data = m.world, aes(x=long, y=lat, group = group), 
-               fill = "gray75", colour = "gray65",size = 0.01) +
+               fill = "gray75", colour = NA,size = 0.01) +
   geom_point(data = krig, 
              aes(x = Lon, y = Lat, group=year, size = Biomass.density/1000), 
              pch = 1, colour = "#D60019",stroke = .25) +
@@ -230,7 +230,7 @@ krigPlot <- ggplot(data = NULL) +
         strip.text = element_blank(),
         axis.title = element_blank(),
         axis.text = element_text(size=7, colour = "black"),
-        axis.ticks.length = unit(0.1,"cm"),
+        axis.ticks.length = unit(0.05,"cm"),
         legend.text = element_text(size=8),
         legend.title = element_text(size=9, face="plain"),
         legend.background = element_blank(), legend.key = element_blank(),

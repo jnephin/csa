@@ -2,18 +2,14 @@
 \usepackage{graphicx} 
 \usepackage{pstricks} 
 \usepackage{epstopdf}
-\graphicspath{{C:/Users/NephinJ/Documents/Hake/1992-2013/Figures/}}
+\graphicspath{{D:/Documents/Hake/1998-2015/Figures/}}
 \usepackage[left=3cm,right=3cm,top=2.5cm,bottom=2.5cm]{geometry}
-\usepackage[font=small]{caption}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{placeins} %\FloatBarrier
 \usepackage{hyperref}
 \usepackage{pdflscape} %landscape
-\usepackage{longtable}
-\usepackage{booktabs}
-\setlength{\aboverulesep}{0pt}
-\setlength{\belowrulesep}{0pt}
-\setlength\heavyrulewidth{1.1pt}
-\setlength\lightrulewidth{.4pt}
+
 \usepackage{array}
 \newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
 \renewcommand{\arraystretch}{1.2}
@@ -46,7 +42,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Methods}
 
-TrackRegion.Map.pdf
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = .8]{{TrackRegion.Map}.pdf}
+\caption{}
+\label{surveymap}
+\end{figure}
+
+
+
 
 
 \FloatBarrier
@@ -54,68 +58,145 @@ TrackRegion.Map.pdf
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 
-\subsection{Spatial distribution of Pacific hake}
-
-Biomass/Map/Krig.Biomass.Map.1998-2015.pdf
-Biomass/StockBiomass.Bar.pdf
-Indices/AggregatedIndex_anomaly.pdf
-Indices/PatchinessIndex_anomaly.pdf
-
-\subsection{Size and age of Pacific hake stock}
-
-Ages/FreqAge.Curves.Strata.pdf
-Indices/AgeIndex_anomaly.pdf
-Indices/LengthIndex_anomaly.pdf
-
-\subsection{Migration Indices}
-Migration/PercentBiomass.Curves.pdf
-Indices/MigrationIndex_anomaly.pdf
-Correlate/Migration.Indices.pdf
-
-Correlate/Migration.Age.Indices.pdf
-Correlate/Migration.Stock.Indices.pdf
-
-\subsection{Sea surface temperature, surface chlorophyll and upwelling}
-SST/Maps/SSTanom.1998-2015.Map.Spring.pdf
-SST/Maps/SSTanom.1998-2015.Map.Summer.pdf
-CHL/Maps/CHLanom.1998-2015.Map.Spring.pdf
-CHL/Maps/CHLanom.1998-2015.Map.Summer.pdf
-
-Indices/SSTIndex_anomly.pdf
-Indices/CHLIndex_anomly.pdf
-Indices/UpwelIndex_anomly.pdf
-
-Correlate/SST.Migration.pdf
-Correlate/CHL.Migration.pdf
-Correlate/Upwel.Migration.pdf
-
-\subsection{Hake migration model} 
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{rrrrr}
-  \hline
- & Estimate & Std. Error &  P-value \\ 
-  \hline
-(Intercept) & -0.5590 & 2.4955 & 0.8302 \\ 
-  dat\$SST Canada & 12.0789 & 4.1288 & 0.0264 \\ 
-  dat\$Chlorophyll US & -5.7803 & 2.0976 & 0.0330 \\ 
-  dat\$Upwelling 33 Lat & -0.1318 & 0.0443 & 0.0248 \\ 
-   \hline
-\end{tabular}
-\end{table}
-
-
-Model/PercenCan.PartialReg.pdf
-
+\subsection{Biomass and spatial distribution of Pacific hake}
 
 
 \begin{figure}[h!]
 \centering
-\includegraphics[scale = 1]{{Maps/TrackRegion.1992-2013.Map}.pdf}
-\caption{Spatial area (outlined in red) which encompasses all the acoustic survey tracks (shown in black) from 1995 to 2013 and a 30 km buffer. Figure created with script: `Track.Polygon.Map.R'}
-\label{TrackRegion}
+\includegraphics[scale = .9]{{Biomass/StockBiomass.Bar}.pdf}
+\caption{}
+\label{}
 \end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = .9]{{Biomass/Maps/Krig.Biomass.Map.1998-2015}.pdf}
+\caption{}
+\label{krigmap}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = .9]{{Indices/PatchAggrIndex_anomaly}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+\FloatBarrier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Size and age of Pacific hake stock}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = .8]{{Ages/FreqAge.Curves.Strata}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = .9]{{Indices/AgeSizeIndex_anomaly}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+\FloatBarrier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Migration Indices}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = .8]{{Migration/PercentBiomass.Curves}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = .95]{{Indices/MigrationIndex_anomaly}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = .9]{{Correlate/Cor.Migration.Indices}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = .9]{{Correlate/Age.Stock.Indices}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+\FloatBarrier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sea surface temperature, surface chlorophyll and upwelling}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = 1]{{Indices/SSTIndex_anomly}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = 1]{{Indices/CHLIndex_anomly}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = 1]{{Indices/UpwelIndex_anomly}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+
+\FloatBarrier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Hake migration model} 
+
+\begin{table}[ht]
+\caption{The formula here}
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ Term & Variable & Coefficient & Standard Error &  P value \\ 
+  \hline
+  $b$ & Intercept & -0.5590 & 2.4955 & 0.8302 \\ 
+ $m_1$ & SST Canada & 12.0789 & 4.1288 & 0.0264 \\ 
+ $m_2$ & Chlorophyll US & -5.7803 & 2.0976 & 0.0330 \\ 
+ $m_3$ & Upwelling 33 Lat & -0.1318 & 0.0443 & 0.0248 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = 1]{{Model/PercenCan.PartialReg}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+
 
 
 \FloatBarrier
@@ -126,7 +207,47 @@ Model/PercenCan.PartialReg.pdf
 
 \FloatBarrier
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Conclusion}
+\section{Conclusion}
+
+
+
+\FloatBarrier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Supplemental Figures}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = .8]{{SST/Maps/SSTanom.1998-2015.Map.Summer}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale = .8]{{CHL/Maps/CHLanom.1998-2015.Map.Spring}.pdf}
+\caption{}
+\label{}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\begin{subfigure}[b]{1\textwidth}
+\includegraphics[scale = .8]{{Correlate/SST.Migration}.pdf}
+\end{subfigure}
+\begin{subfigure}[b]{1\textwidth}
+\includegraphics[scale = .8]{{Correlate/CHL.Migration}.pdf}
+\end{subfigure}
+\begin{subfigure}[b]{1\textwidth}
+\includegraphics[scale = .8]{{Correlate/Upwel.Migration}.pdf}
+\end{subfigure}
+\caption{}
+\label{}
+\end{figure}
+
+
 
 
 

@@ -308,7 +308,6 @@ save(mig10, file = "Data/AgedMigration.10.Index.rda")
 ############################################################################
 ############################################################################
 
-
 # combine all age indices
 mig <- rbind(mig5,mig10)
 mig$age <- c(rep("age 5",nrow(mig5)),rep("age 10",nrow(mig10)))
@@ -317,7 +316,6 @@ mig$age <- factor(mig$age, levels = c("age 5","age 10"))
 # positive / negative label
 mig$sign <- "p"
 mig$sign[mig$anom <= 0] <- "n"
-
 
 # strip labels
 labstrp <- data.frame(age = c("age 5","age 10"),x = rep("2013",2), y = rep(30,2))
@@ -331,11 +329,13 @@ amigplot <- basePlot +
   geom_hline(yintercept = 0, size = .1, linetype = 1, colour= "black")+
   geom_text(data = labstrp, aes(x = factor(x), y =  y, label = age), 
             size = 3, hjust = 0)+
-  labs(x = "", y = "Percent of hake in Canada anomaly")+
+  labs(x = "", y = "Percent in Canada anomaly")+
+  scale_x_discrete(labels = yrs)+
   scale_fill_manual(values = c("#377eb8","#e41a1c"))+
   theme(strip.text = element_blank(),
         panel.margin = unit(.2, "lines"))
 amigplot
+
 
 ##########################################################################
 
@@ -358,7 +358,8 @@ labstrp <- data.frame(grp = c("Total (kmt)","Proportion (%)",
                       y = c(318,33,33),
                       ymin = c(-355*.8,-37*.8,-37*.8),
                       ymax = c(355,37,37))
-
+# x axis
+yrs <- c("98","01","03","05","07","09","11","12","13","15")
 
 # plot anomaly bio in can
 migplot <- basePlot +
@@ -370,19 +371,20 @@ migplot <- basePlot +
   geom_hline(yintercept = 0, size = .1, linetype = 1, colour= "black")+
   geom_text(data = labstrp, aes(x = factor(x), y =  y, label = grp), 
             size = 2.7, hjust = 0.5)+
-  labs(x = "", y = "Hake biomass in Canada anomaly")+
+  labs(x = "Years", y = "Biomass in Canada anomaly")+
   scale_fill_manual(values = c("#377eb8","#e41a1c"))+
   scale_y_continuous(expand = c(0,0))+
+  scale_x_discrete(labels = yrs)+
   theme(strip.text = element_blank(),
-        axis.text.x = element_text(angle=90,vjust=.5),
+        axis.text.x = element_text(vjust=.5),
         panel.margin = unit(.1, "lines"),
-        plot.margin = unit(c(.5,.5,.2,.5), "lines"))
+        plot.margin = unit(c(.2,.2,.2,.2), "lines"))
 migplot
 
 ##########################################################################
 
 # Save as a pdf
-pdf("Figures/Indices/MigrationIndex_anomaly.pdf", width=7.5, height=3) 
+pdf("Figures/Indices/MigrationIndex_anomaly.pdf", width=6.7, height=2) 
 migplot
 dev.off()
 

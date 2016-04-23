@@ -135,22 +135,21 @@ track <- as.data.frame(proj.track)
 #plots
 
 extentplot <- ggplot(data = NULL) +
-  #land polygon
+  #strata
   geom_line(data = strat.grat, aes(x=long, y=lat, group = group), 
             size=1, colour = "black") +
   #land polygon
   geom_polygon(data = m.world, aes(x=long, y=lat, group = group), 
-               fill = "gray75", colour = "gray65",size = 0.01) +
+               fill = "gray75", colour = NA,size = 0.01) +
   # track polygon
-geom_polygon(data = bb, aes(x = long, y = lat), 
+  geom_polygon(data = bb, aes(x = long, y = lat), 
              fill=NA, colour = "red", size = 1) + 
+  # track polygon
+  geom_text(data = ylabs, aes(x = x+200000, y = y+10000, label = ylab), 
+               colour = "black", size = 4, angle = -11, hjust = 0) + 
   # axes
   labs(x="", y="") +
   scale_x_continuous(breaks = xlabs$x, labels = xlabs$xlab) +
-  scale_y_continuous(breaks = ylabs$y, labels = ylabs$ylab) +
-  # grid, scalebar and north arrow
-  geom_line(data = grats, aes(x=long, y=lat, group = group), 
-            size=.01, colour = "grey55") +
   geom_segment(data = scalebar, 
                aes(x = x, y = y, xend = end.x, yend = end.y), 
                size = 1.2, colour = "black", lineend = "butt") +
@@ -174,14 +173,15 @@ geom_polygon(data = bb, aes(x = long, y = lat),
 #themes 
 coord_fixed(xlim=c(-1900000, -500000), ylim=c(3500000, 6500000))  +
 theme(panel.border = element_rect(fill=NA, colour="black", size = .1),
-                     panel.background = element_rect(fill="white",colour="white"),
-                     panel.grid.major = element_blank(),
-                     panel.grid.minor = element_blank(),
-                     axis.text = element_text(size=8, colour = "black"),
-                     axis.text.y = element_text(size=10, colour = "black", hjust=1.1),
-                     axis.ticks = element_blank(),
-                     axis.title = element_blank(),
-                     plot.margin = unit(c(.5,.5,.3,.3), "lines")) # top, right, bottom, and left 
+      panel.background = element_rect(fill="white",colour="white"),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text.x = element_text(size=8, colour = "black"),
+      axis.text.y = element_blank(),
+      axis.ticks.length = unit(0.1,"cm"),
+      axis.ticks.y= element_blank(),
+      axis.title = element_blank(),
+      plot.margin = unit(c(.3,.3,.3,.3), "lines")) # trbl 
 extentplot
 
 
@@ -200,7 +200,7 @@ dev.off()
 yearsplot <- ggplot(data = NULL) +
   facet_wrap(~year, nrow = 2)+
   # survey track
-  geom_point(data = track, aes(x = Lon, y = Lat), size = .1, pch = 16) +
+  geom_point(data = track, aes(x = Lon, y = Lat), size = .05, pch = 16) +
   #land polygon
   geom_polygon(data = m.world, aes(x=long, y=lat, group = group), 
                fill = "gray75", colour = "gray65",size = 0.01) +
@@ -220,7 +220,7 @@ yearsplot <- ggplot(data = NULL) +
         axis.text = element_blank(),
         strip.text = element_blank(),
         strip.background = element_blank(),
-        axis.ticks.length = unit(0.1,"cm"),
+        axis.ticks.length = unit(0.05,"cm"),
         axis.title = element_blank(),
         plot.margin = unit(c(.5,.5,.3,.3), "lines"),
         panel.margin = unit(0,"lines")) # top, right, bottom, and left 

@@ -73,8 +73,11 @@ mlaind$sign[mlaind$anom <= 0] <- "n"
 
 
 # strip labels
-labstrp <- data.frame(grp = c("Canada","Total stock"),x = rep("2007",2), 
+labstrp <- data.frame(grp = c("Canada","Total stock"),x = rep("2005",2), 
                       y = rep(2.7,2))
+
+# x axis
+yrs <- c("98","01","03","05","07","09","11","12","13","15")
 
 
 # plot size anomaly indices
@@ -84,15 +87,16 @@ sizeplot <- basePlot +
            width = .7, show.legend = FALSE, stat = "identity")+
   geom_hline(yintercept = 0, size = .1, linetype = 1, colour= "black")+
   geom_text(data = labstrp, aes(x = factor(x), y =  y, label = grp), 
-            size = 3, hjust = 0)+
-  labs(x = "", y = "Mean fork length (cm) at age 5 anomaly")+
+            size = 2.8, hjust = 0)+
+  labs(x = "", y = "Age-5 fork length anomaly")+
   scale_fill_manual(values = c("#377eb8","#e41a1c"))+
+  scale_x_discrete(labels = yrs)+
   theme(strip.text = element_blank(),
         panel.margin = unit(.2, "lines"))
 sizeplot
 
 
 # Save as a pdf
-pdf("Figures/Indices/LengthIndex_anomaly.pdf", width=7, height=3) 
+pdf("Figures/Indices/LengthIndex_anomaly.pdf", width=4.8, height=2.3) 
 sizeplot
 dev.off()

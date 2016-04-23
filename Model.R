@@ -180,7 +180,7 @@ for (i in c(1,3,5)){
 
 ###############
 # Save as a pdf
-pdf("Figures/Model/PercenCan.PartialReg.pdf", width=7.5, height=2.7) 
+pdf("Figures/Model/PercenCan.PartialReg.pdf", width=6, height=2) 
 grid.arrange(SST_Can,Chloro_US,Upwel_33, nrow=1)
 dev.off()
 

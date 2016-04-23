@@ -97,9 +97,9 @@ aplot <- basePlot +
   facet_wrap(~LAT, nrow = 2)+
   geom_vline(xintercept = seq(12.5,120,12),size = .1, colour = "grey80")+
   geom_bar(data = upwel, aes(x = factor(date), y = anom, fill = factor(sign)),
-           width = .9, show.legend = FALSE, stat = "identity")+
+           width = .75, show.legend = FALSE, stat = "identity")+
   geom_text(data = laba, aes(x = factor(x), y =  y, label = LAT), size = 3)+
-  labs(x = "", y = "Upwelling index anomaly")+
+  labs(x = "", y = "Upwelling Index anomaly")+
   scale_x_discrete(breaks = factor(ups$date[51:60]),labels = years)+
   scale_fill_manual(values = c("#377eb8","#e41a1c"))+
   theme(strip.text = element_blank(),
@@ -107,7 +107,7 @@ aplot <- basePlot +
 aplot
 
 # Save as a pdf
-pdf("Figures/Indices/UpwelIndex_anomly.pdf", width=7, height=5) 
+pdf("Figures/Indices/UpwelIndex_anomly.pdf", width=6, height=3) 
 aplot
 dev.off()
 
@@ -143,28 +143,32 @@ cor.up$sig[cor.up$p < 0.05] <- "y"
 
 ## label strata
 cor.up$ind <- as.character(cor.up$ind)
-cor.up$ind[cor.up$ind == "mig5"] <- "Age-5 migration index"
-cor.up$ind[cor.up$ind == "bcan"] <- "Total biomass in Canadian waters"
-cor.up$ind[cor.up$ind == "pcan"] <- "Percent biomass in Canadian waters"
+cor.up$ind[cor.up$ind == "mig5"] <- "Percent age-5 biomass"
+cor.up$ind[cor.up$ind == "bcan"] <- "Total biomass"
+cor.up$ind[cor.up$ind == "pcan"] <- "Percent biomass"
 
+# months: change text to number
+cor.up$month <-rep(1:12,each=6)
 
 # plot migration index upwelling correltion
 migup <- basePlot +
-  geom_point(data = cor.up, aes(x = month, y = cor, shape = sig, colour = area),
-             size = 2)+
-  geom_line(data = cor.up, aes(x = month, y = cor, group = area, colour = area))+
+  geom_point(data = cor.up, 
+             aes(x = factor(month), y = cor, shape = sig, colour = area),
+             size = 1.5)+
+  geom_line(data = cor.up, size = .5,
+            aes(x = factor(month), y = cor, group = area, colour = area))+
   facet_grid(~ind)+
   geom_hline(yintercept = 0, linetype = 3, size = .4, colour = "grey30")+
-  labs(x = "", y = "Correlation coefficient")+
+  labs(x = "Months", y = "Correlation coefficient")+
   scale_shape_manual(values = c(1,15), guide = FALSE)+
-  scale_colour_manual(values = c("#E69F00","#56B4E9"), name = "", label = c("South","North"))+ 
-  theme(legend.position = c(0,1.2), legend.justification = c(0,1.2),
-        panel.margin = unit(.2, "lines"),
-        axis.text.x = element_text(size=7, colour = "black", angle = 90))
+  scale_colour_manual(values = c("grey30", "grey60"), 
+                      name = "", label = c("South","North"))+ 
+  theme(legend.position = c(.65,1.1), legend.justification = c(0,1),
+        panel.margin = unit(.2, "lines"))
 migup
 
 # Save as a pdf
-pdf("Figures/Correlate/Upwel.Migration.pdf", width=7, height=3) 
+pdf("Figures/Correlate/Upwel.Migration.pdf", width=7, height=2.5) 
 migup
 dev.off()
 

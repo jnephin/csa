@@ -1,6 +1,7 @@
 require(ggplot2)
 require(plyr)
 require(reshape2)
+require(gridExtra)
 source("base.plot.R")
 
 # response
@@ -54,9 +55,7 @@ response.df <- data.frame(x = c(response$pcan,response$pcan,response$bcan),
                           grp =  c(rep("Percent - Total",10),
                                    rep("Percent - Percent Age 5",10),
                                    rep("Total - Percent Age 5",10)))
-response.df$grp <- factor(response.df$grp, levels = c("Percent - Total",
-                                                      "Percent - Percent Age 5",
-                                                      "Total - Percent Age 5"))
+
 # correlation function
 cors <- function(df){
  rho = round(cor.test(df$x,df$y)$estimate,2)
@@ -66,27 +65,35 @@ cors <- function(df){
 
 # apply cor function for each group
 cor.res <- as.data.frame.matrix(ddply(response.df, .(grp), cors))
-cor.res$x <- ddply(response.df, .(grp), summarise, x = min(x))[2]*.7
+cor.res$x <- ddply(response.df, .(grp), summarise, x = min(x))[2]*.8
 cor.res$y <- ddply(response.df, .(grp), summarise, y = max(y))[2]*.95
 cor.res$rho <- paste("r = ", cor.res$rho)
-cor.res$grp <- factor(cor.res$grp, levels = c("Percent - Total",
-                                                      "Percent - Percent Age 5",
-                                                      "Total - Percent Age 5"))
-#plot
-resplot <- basePlot +
-  facet_wrap(~grp, scale = "free")+
-  geom_point(data =  response.df, aes(x = x, y = y), size=1.5, pch=19) +
-  geom_text(data = cor.res, aes(x = x, y = y, label = rho),
-            size = 3)+
-  theme(axis.title = element_blank(),
-        panel.margin = unit(.1,"cm"))
-resplot
 
+
+
+#plot
+for (i in unique(response.df$grp)){
+  tmp <- response.df[response.df$grp == i,]
+  tmpcor <- cor.res[cor.res$grp == i,]
+  xlab <- gsub(" -.*","",i)
+  ylab <- gsub(".*- ","",i)
+  name <- gsub(" |-","",i)
+  resplot <- basePlot + geom_point(data =  tmp, aes(x = x, y = y), 
+                                   size=1.3, pch=19)
+    resplot <- resplot + geom_text(data = tmpcor, aes(x = x, y = y, label = rho),
+                                   size = 3, hjust = 0)
+    resplot <- resplot + geom_smooth(data = tmp, aes(x = x, y = y),
+                                   colour = "black", se = F, method = "lm", size=.1)
+    resplot <- resplot + theme(plot.margin = unit(c(.3,.2,.3,.2), "lines"),
+                               axis.title.y= element_text(margin=margin(r = -2)))
+    resplot <- resplot + labs(x=xlab,y=ylab)
+  assign(name,resplot)
+}
 
 ###############
 # Save as a pdf
-pdf("Figures/Correlate/Migration.Indices.pdf", width=7.5, height=3) 
-resplot
+pdf("Figures/Correlate/Cor.Migration.Indices.pdf", width=7, height=2) 
+grid.arrange(PercentTotal,PercentPercentAge5,TotalPercentAge5, nrow=1)
 dev.off()
 
 
@@ -95,87 +102,63 @@ dev.off()
 
 
 ######################################################################
-## plot percent in canada against age
+## plot percent in canada against age and stock indices
 
 
-# pcan v age data
+# pcan v other data
 dat.melt <- melt(dat)
-age.df <- data.frame(x = rep(response$pcan, 3),
-                          y = dat.melt[1:30,2],
-                          grp = as.character(dat.melt[1:30,1]), stringsAsFactors = FALSE)
-age.df$grp[age.df$grp == "mage"] <- "Mean Age"
-age.df$grp[age.df$grp == "magecan"] <- "Mean Age in Canada"
-age.df$grp[age.df$grp == "mla"] <- "Mean Length at Age 5"
-age.df$sig <- "n"
-age.df$sig[age.df$grp == "Mean Age in Canada"] <- "y"
+df <- data.frame(x = rep(response$pcan, 6),
+                 y = dat.melt[,2],
+                 grp = as.character(dat.melt[,1]), 
+                 stringsAsFactors = FALSE)
+
+#rename groups
+df$grp[df$grp == "mage"] <- "Mean Age"
+df$grp[df$grp == "magecan"] <- "Mean Age Canada"
+df$grp[df$grp == "mla"] <- "Age-5 Mean Length"
+df$grp[df$grp == "patch"] <- "Patchiness"
+df$grp[df$grp == "aggr"] <- "Biomass Density"
+df$grp[df$grp == "stock"] <- "Stock Biomass (kmt)"
+df$grp <- factor(df$grp, levels=c("Mean Age","Mean Age Canada",
+                                  "Age-5 Mean Length","Patchiness",
+                                  "Biomass Density","Stock Biomass (kmt)"))
 
 # apply cor function for each group
-age.cor <- as.data.frame.matrix(ddply(age.df, .(grp), cors))
-age.cor$x <- ddply(age.df, .(grp), summarise, x = max(x))[2]*.8
-age.cor$y <- ddply(age.df, .(grp), summarise, y = max(y))[2]*.95
-age.cor$rho <- paste("r = ", age.cor$rho)
+cor.df <- as.data.frame.matrix(ddply(df, .(grp), cors))
+cor.df$x <- ddply(df, .(grp), summarise, x = max(x))[2]*.95
+cor.df$y <- ddply(df, .(grp), summarise, y = max(y))[2]*.95
+cor.df$rho <- paste("r = ", cor.df$rho)
+cor.df$grp <- factor(cor.df$grp, levels=c("Mean Age","Mean Age Canada",
+                                          "Age-5 Mean Length","Patchiness",
+                                          "Biomass Density","Stock Biomass (kmt)"))
+
+# show lm on plot yes/no
+df$type <- "n"
+df$type[df$grp == "Mean Age Canada"] <- "y"
+df$type[df$grp == "Patchiness"] <- "y"
 
 
-#plot
-ageplot <- basePlot +
-  facet_wrap(~grp, scale = "free")+
-  geom_smooth(data =  age.df, aes(x = x, y = y, colour = sig), 
-              method = "lm", se = FALSE, size = .5) +
-  geom_point(data =  age.df, aes(x = x, y = y), size=1.5, pch=19) +
-  geom_text(data = age.cor, aes(x = x, y = y, label = rho),size = 3) +
-  scale_colour_manual(values=c("white","black"), guide = FALSE)+
-  theme(axis.title = element_blank(),
-        panel.margin = unit(.1,"cm"))
-ageplot
+# bottom plots
+predplot <- basePlot +
+  facet_wrap(~grp, nrow=2, scale = "free_y")+
+  geom_smooth(data = df, aes(x = x, y = y, colour = type),
+              se = F, method = "lm", size=.1)+
+  geom_point(data =  df, aes(x = x, y = y), 
+             size=1.3, pch=19)+
+  geom_text(data = cor.df, aes(x = x, y = y, label = rho),
+            size = 3, hjust = 1)+
+  labs(y="Indices",x="Biomass in Canada (%) anomaly")+
+  scale_colour_manual(values = c("white","black"), guide = FALSE)+
+  theme(panel.margin = unit(0, "lines"),
+        axis.title.y= element_text(margin=margin(r = -1)))
+predplot
 
 
 ###############
 # Save as a pdf
-pdf("Figures/Correlate/Migration.Age.Indices.pdf", width=7.5, height=3) 
-ageplot
+pdf("Figures/Correlate/Age.Stock.Indices.pdf", width=6.5, height=4) 
+predplot
 dev.off()
 
 
-
-
-######################################################################
-## plot percent in canada against stock indices
-
-
-# pcan v dist data
-dat.melt <- melt(dat)
-stock.df <- data.frame(x = rep(response$pcan, 3),
-                     y = dat.melt[31:60,2],
-                     grp = as.character(dat.melt[31:60,1]), stringsAsFactors = FALSE)
-stock.df$grp[stock.df$grp == "patch"] <- "Patchiness Index"
-stock.df$grp[stock.df$grp == "aggr"] <- "Density Index"
-stock.df$grp[stock.df$grp == "stock"] <- "Stock Biomass (kmt)"
-stock.df$sig <- "n"
-stock.df$sig[stock.df$grp == "Patchiness Index"] <- "y"
-
-# apply cor function for each group
-stock.cor <- as.data.frame.matrix(ddply(stock.df, .(grp), cors))
-stock.cor$x <- ddply(stock.df, .(grp), summarise, x = max(x))[2]*.8
-stock.cor$y <- ddply(stock.df, .(grp), summarise, y = max(y))[2]*.95
-stock.cor$rho <- paste("r = ", stock.cor$rho)
-
-
-#plot
-stockplot <- basePlot +
-  facet_wrap(~grp, scale = "free")+
-  geom_smooth(data =  stock.df, aes(x = x, y = y, colour = sig), 
-              method = "lm", se = FALSE, size = .5) +
-  geom_point(data =  stock.df, aes(x = x, y = y), size=1.5, pch=19) +
-  geom_text(data = stock.cor, aes(x = x, y = y, label = rho),size = 3) +
-  scale_colour_manual(values=c("white","black"), guide = FALSE)+
-  theme(axis.title = element_blank(),
-        panel.margin = unit(.1,"cm"))
-stockplot
-
-
-###############
-# Save as a pdf
-pdf("Figures/Correlate/Migration.Stock.Indices.pdf", width=7.5, height=3) 
-stockplot
-dev.off()
 
